@@ -10,11 +10,11 @@ const app = express();
 
 //create connection
 const db = mysql.createConnection({
-	host: 'remotemysql.com',
-    port: 3306,
-    user: 'r0GFNGijMn',
-    password: 'XKM5EEg48x',
-    database: 'r0GFNGijMn'
+	host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
+    port: 5432,
+    user: 'xmfxzigqqctouo',
+    password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
+    database: 'dbds5lgqf1gspn'
 });
 
 //connect
