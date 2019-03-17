@@ -18,24 +18,8 @@ const client = new Client({
 })
 
 
-//create connection
-// const db = mysql.createConnection({
-// 	host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
-//     port: 5432,
-//     user: 'xmfxzigqqctouo',
-//     password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
-//     database: 'dbds5lgqf1gspn'
-// });
-
-//connect
-// db.connect((err)=> {
-// 	if(err) throw err 
-// 	console.log('MySql Connected...');
-// });
-
 client.connect()
 .then(() => console.log("Connection successfuly"))
-.then(()=>  client.query("insert into customer_info values ('p', 'm', 1, 't', 't@gmail.com', 1)")) //pass, last, id, first, email, customer
 .then(()=>  client.query("select * from customer_info"))
 .then(results => console.table(results.rows))
 .catch(e => console.log(e))
@@ -56,15 +40,7 @@ const IN_PROD = NODE_ENV === 'production'
 
 const users = []		//holds information about all customers
 
-var query = client.query('SELECT * FROM customer_info');
- 
-query.on('error', function(err) {
-    throw err;
-});
- 
-query.on('result', function(row) {		//pushes all data from db to customers array
-    users.push(row);
-});
+
 
 app.use(bodyParser.json());
 
@@ -326,8 +302,6 @@ app.post('/logout', redirectLogin, (req, res) => {
 	})
 
 })
-
-
 
 
 app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
