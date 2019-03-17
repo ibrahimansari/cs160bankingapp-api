@@ -21,7 +21,7 @@ const client = new Client({
 client.connect()
 .then(() => console.log("Connection successfuly"))
 .then(()=>  client.query("select * from customer_info"))
-.then(()=>  client.query("inser into  customer_info values ('pass', 'samm', 20, 'sam', 't@gmail.com', 1)"))
+.then(()=>  client.query("insert into  customer_info values ('pass', 'samm', 20, 'sam', 't@gmail.com', 1)"))
 .then(results => console.table(results.rows))
 .catch(e => console.log(e))
 .finally(() => client.end())
