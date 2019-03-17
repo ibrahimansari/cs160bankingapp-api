@@ -28,7 +28,7 @@ client.connect()
 
 
 const{
-	PORT = 5000,
+	PORT = process.env.PORT || 8080,
 	NODE_ENV = 'development',
 	SESS_NAME = 'sid',
 	SESS_SECRET = 'ssh!quiet,it\'asecret!',
