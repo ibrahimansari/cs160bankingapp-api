@@ -3,26 +3,43 @@ const session = require('express-session')
 const bodyParser = require('body-parser')
 const TWO_HOURS = 1000 * 60 * 60 * 2
 
-const mysql = require('mysql');
+//const mysql = require('mysql');
 
 const app = express();
 
+const {Client} = require('pg')
 
-//create connection
-const db = mysql.createConnection({
+const client = new Client({
 	host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
     port: 5432,
     user: 'xmfxzigqqctouo',
     password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
     database: 'dbds5lgqf1gspn'
-});
+})
+
+
+//create connection
+// const db = mysql.createConnection({
+// 	host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
+//     port: 5432,
+//     user: 'xmfxzigqqctouo',
+//     password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
+//     database: 'dbds5lgqf1gspn'
+// });
 
 //connect
-db.connect((err)=> {
-	if(err) throw err 
-	console.log('MySql Connected...');
-});
+// db.connect((err)=> {
+// 	if(err) throw err 
+// 	console.log('MySql Connected...');
+// });
 
+client.connect()
+.then(() => console.log("Connection successfuly"))
+.then(()=>  client.query("insert into customer_info values ('p', 'm', 1, 't', 't@gmail.com', 1)")) //pass, last, id, first, email, customer
+.then(()=>  client.query("select * from customer_info"))
+.then(results => console.table(results.rows))
+.catch(e => console.log(e))
+.finally(() => client.end())
 
 
 const{
@@ -36,10 +53,10 @@ const{
 
 const IN_PROD = NODE_ENV === 'production'
 
-	
+
 const users = []		//holds information about all customers
 
-var query = db.query('SELECT * FROM customer_info');
+var query = client.query('SELECT * FROM customer_info');
  
 query.on('error', function(err) {
     throw err;
@@ -97,6 +114,34 @@ app.use((req, res, next)=>{
 	next()
 })
 
+app.post('/api/mydata', (req, res) => {
+
+	console.log("called");
+	var hold = req.session.userId;
+	var trueEmail = '';
+	for(var i = 0; i < users.length; i++){
+		if(users[i].id === hold){
+			trueEmail = users[i].email;
+			break;
+		}
+	}
+	// const d = [];
+	// var query2 = client.query('SELECT * FROM transaction');
+	// query2.on('result', function(row) {		//pushes all data from db to customers array
+	// 	d.push(row);
+	// });
+
+	// res.send(d);
+
+	res.send("hello")
+
+
+	// var sql = "SELECT * FROM transaction where email = ?";
+	// db.query(sql, trueEmail, function(err, rows, fields){});
+	
+
+});
+
 app.post('/api/validateLogin', (req, res) => {
 		console.log('validateLogin called');
 
@@ -124,6 +169,7 @@ app.post('/api/validateLogin', (req, res) => {
 			}
 });
 
+
 app.post('/api/registerUser', (req, res) => {
 
 	const {first_name, last_name, email, password, customer} = req.body
@@ -148,7 +194,7 @@ app.post('/api/registerUser', (req, res) => {
 			//store new user in db
 			let post = {id:user.id, first_name: user.first_name, last_name: user.last_name, email: user.email.toLowerCase(), password:user.password, customer:user.customer};
 			let sql = 'INSERT INTO customer_info SET ?';
-			let query = db.query(sql, post, (err, result) => {
+			let query = client.query(sql, post, (err, result) => {
 				if(err) throw err;
 			});
 
