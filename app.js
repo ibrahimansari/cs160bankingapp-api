@@ -17,12 +17,12 @@ const client = new Client({
     database: 'dbds5lgqf1gspn'
 })
 
+const users = []		//holds information about all customers
 
 client.connect()
 .then(() => console.log("Connection successfuly"))
 .then(()=>  client.query("select * from customer_info"))
-.then(()=>  client.query("insert into  customer_info values ('pass', 'samm', 20, 'sam', 't@gmail.com', 1)"))
-.then(results => console.table(results.rows))
+.then(results => users.push(results.rows))
 .catch(e => console.log(e))
 .finally(() => client.end())
 
@@ -37,9 +37,6 @@ const{
 }  = process.env
 
 const IN_PROD = NODE_ENV === 'production'
-
-
-const users = []		//holds information about all customers
 
 
 
