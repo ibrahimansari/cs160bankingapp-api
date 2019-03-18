@@ -39,7 +39,7 @@ const PORT = process.env.PORT || 8080;
 
 // }  = process.env
 
-const IN_PROD = NODE_ENV === 'production'
+//const IN_PROD = NODE_ENV === 'production'
 
 
 
@@ -49,18 +49,18 @@ app.use(bodyParser.urlencoded({
 	extended:true
 }))
 
-app.use(session({
+// app.use(session({
 
-	name:  SESS_NAME, 
-	resave: false,
-	saveUninitialized: false,
-	secret: SESS_SECRET, 
-	cookie:{
-		maxAge: SESS_LIFETIME,
-		sameSite: true,
-		secure: IN_PROD
-	}
-}))
+// 	name:  SESS_NAME, 
+// 	resave: false,
+// 	saveUninitialized: false,
+// 	secret: SESS_SECRET, 
+// 	cookie:{
+// 		maxAge: SESS_LIFETIME,
+// 		sameSite: true,
+// 		secure: IN_PROD
+// 	}
+// }))
 
 
 const redirectLogin = (req, res, next) => {
@@ -292,17 +292,17 @@ app.post('/api/registerUser', (req, res) => {
 // })
 
 
-app.post('/logout', redirectLogin, (req, res) => {
+// app.post('/logout', redirectLogin, (req, res) => {
 
-	req.session.destroy(err=> {
-		if(err){
-			return res.redirect('/home')
-		}
-		res.clearCookie(SESS_NAME)
-		res.redirect('/login')
-	})
+// 	req.session.destroy(err=> {
+// 		if(err){
+// 			return res.redirect('/home')
+// 		}
+// 		res.clearCookie(SESS_NAME)
+// 		res.redirect('/login')
+// 	})
 
-})
+// })
 
 
 app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
