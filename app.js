@@ -28,15 +28,16 @@ client.connect()
 .catch(e => console.log(e))
 .finally(() => client.end())
 
+const PORT = process.env.PORT || 8080;
 
-const{
-	PORT = process.env.PORT || 8080,
-	NODE_ENV = 'development',
-	SESS_NAME = 'sid',
-	SESS_SECRET = 'ssh!quiet,it\'asecret!',
-	SESS_LIFETIME = TWO_HOURS
+// const{
+// 	PORT = process.env.PORT || 8080,
+// 	NODE_ENV = 'development',
+// 	SESS_NAME = 'sid',
+// 	SESS_SECRET = 'ssh!quiet,it\'asecret!',
+// 	SESS_LIFETIME = TWO_HOURS
 
-}  = process.env
+// }  = process.env
 
 const IN_PROD = NODE_ENV === 'production'
 
@@ -190,105 +191,105 @@ app.post('/api/registerUser', (req, res) => {
 
 
 
-app.get('/', (req, res) => {
+// app.get('/', (req, res) => {
 
-	const{userId}  = req.session
+// 	const{userId}  = req.session
 
-	res.send(`
+// 	res.send(`
 
-		<h1>Welcome!</h1>
-		${userId ? `
-		<a href ='/login'>Login</a>
-		<a href = '/register'>Register</a>
+// 		<h1>Welcome!</h1>
+// 		${userId ? `
+// 		<a href ='/login'>Login</a>
+// 		<a href = '/register'>Register</a>
 
-		<a href = '/home'>Home</a>
-		<form method = 'post' action = '/logout'>
-			<button>Logout</button>
-		</form>
+// 		<a href = '/home'>Home</a>
+// 		<form method = 'post' action = '/logout'>
+// 			<button>Logout</button>
+// 		</form>
 
-		` : `
-		<a href = '/login'>Login</a>
-		<a href = '/register'>Register</a>
+// 		` : `
+// 		<a href = '/login'>Login</a>
+// 		<a href = '/register'>Register</a>
 
-		`}
+// 		`}
 
-	`)
+// 	`)
 
-})
+// })
 
-app.get('/home', redirectLogin, (req, res) => {
+// app.get('/home', redirectLogin, (req, res) => {
 
-	const {user} = res.locals
+// 	const {user} = res.locals
 
-	res.send(`
+// 	res.send(`
 
-		<h1>Home</h1>
-		<a href = '/'>Main</a>
-		<ul>
-			<li>Name: ${user.first_name}</li>
-			<li>Email: ${user.email}</li>
-		</ul>
+// 		<h1>Home</h1>
+// 		<a href = '/'>Main</a>
+// 		<ul>
+// 			<li>Name: ${user.first_name}</li>
+// 			<li>Email: ${user.email}</li>
+// 		</ul>
 
-	`)
-})
-
-
-app.get('/login', redirectHome, (req, res) => {
-
-	res.send(`
-
-		<h1>Login</h1>
-		<form method='post' action='/login'>
-
-			<input type='email' name='email' placeholder='Email' required />
-			<input type='password' name='password' placeholder='Password' required />
-			<input type = 'submit' />
-		</form>
-		<a href = '/register'>Register</a>
-
-	`)
-})
-
-app.get('/register', redirectHome, (req, res) => {
-
-	res.send(`
-
-		<h1>Register</h1>
-		<form method='post' action='/register'>
-		<input name='first_name' placeholder='First Name' required />
-		<input name='last_name' placeholder='Last Name' required />
-		<input type='email' name='email' placeholder='Email' required />
-		<input type='password' name='password' placeholder='Password' required />
-		<select name="customer" id="customer">
-	        <option value="No">I'm NOT a customer</option>
-	        <option value="Yes">I'm a customer</option>
-    	</select>
-
-		<input type = 'submit' />
-		</form>
-		<a href = '/login'>Login</a>
+// 	`)
+// })
 
 
-	`)
-})
+// app.get('/login', redirectHome, (req, res) => {
+
+// 	res.send(`
+
+// 		<h1>Login</h1>
+// 		<form method='post' action='/login'>
+
+// 			<input type='email' name='email' placeholder='Email' required />
+// 			<input type='password' name='password' placeholder='Password' required />
+// 			<input type = 'submit' />
+// 		</form>
+// 		<a href = '/register'>Register</a>
+
+// 	`)
+// })
+
+// app.get('/register', redirectHome, (req, res) => {
+
+// 	res.send(`
+
+// 		<h1>Register</h1>
+// 		<form method='post' action='/register'>
+// 		<input name='first_name' placeholder='First Name' required />
+// 		<input name='last_name' placeholder='Last Name' required />
+// 		<input type='email' name='email' placeholder='Email' required />
+// 		<input type='password' name='password' placeholder='Password' required />
+// 		<select name="customer" id="customer">
+// 	        <option value="No">I'm NOT a customer</option>
+// 	        <option value="Yes">I'm a customer</option>
+//     	</select>
+
+// 		<input type = 'submit' />
+// 		</form>
+// 		<a href = '/login'>Login</a>
 
 
-app.post('/login', redirectHome, (req, res) => {
-	console.log('logging in');
+// 	`)
+// })
 
-	const{email, password} = req.body
 
-	if(email && password){
-		const user = users.find(user => user.email === email && user.password === password)
+// app.post('/login', redirectHome, (req, res) => {
+// 	console.log('logging in');
 
-		if(user){
-			req.session.userId = user.id
-			return res.redirect('/home')
-		}
-	}
+// 	const{email, password} = req.body
 
-	res.redirect('/login')
-})
+// 	if(email && password){
+// 		const user = users.find(user => user.email === email && user.password === password)
+
+// 		if(user){
+// 			req.session.userId = user.id
+// 			return res.redirect('/home')
+// 		}
+// 	}
+
+// 	res.redirect('/login')
+// })
 
 
 app.post('/logout', redirectLogin, (req, res) => {
