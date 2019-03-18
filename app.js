@@ -28,18 +28,18 @@ client.connect()
 .catch(e => console.log(e))
 .finally(() => client.end())
 
-const PORT = process.env.PORT || 8080;
+//const PORT = process.env.PORT || 8080;
 
-// const{
-// 	PORT = process.env.PORT || 8080,
-// 	NODE_ENV = 'development',
-// 	SESS_NAME = 'sid',
-// 	SESS_SECRET = 'ssh!quiet,it\'asecret!',
-// 	SESS_LIFETIME = TWO_HOURS
+const{
+	PORT = process.env.PORT || 8080,
+	NODE_ENV = 'development',
+	SESS_NAME = 'sid',
+	SESS_SECRET = 'ssh!quiet,it\'asecret!',
+	SESS_LIFETIME = TWO_HOURS
 
-// }  = process.env
+}  = process.env
 
-//const IN_PROD = NODE_ENV === 'production'
+const IN_PROD = NODE_ENV === 'production'
 
 
 
@@ -49,18 +49,18 @@ app.use(bodyParser.urlencoded({
 	extended:true
 }))
 
-// app.use(session({
+app.use(session({
 
-// 	name:  SESS_NAME, 
-// 	resave: false,
-// 	saveUninitialized: false,
-// 	secret: SESS_SECRET, 
-// 	cookie:{
-// 		maxAge: SESS_LIFETIME,
-// 		sameSite: true,
-// 		secure: IN_PROD
-// 	}
-// }))
+	name:  SESS_NAME, 
+	resave: false,
+	saveUninitialized: false,
+	secret: SESS_SECRET, 
+	cookie:{
+		maxAge: SESS_LIFETIME,
+		sameSite: true,
+		secure: IN_PROD
+	}
+}))
 
 
 const redirectLogin = (req, res, next) => {
