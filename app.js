@@ -119,7 +119,7 @@ app.post('/api/mydata', (req, res) => {
 
 });
 
-app.post('/api/', (req, res) => {
+app.post('/api/validateUser', (req, res) => {
 		console.log('validateLogin called');
 	let val = 'Valid Login1';
 	res.send(val);
