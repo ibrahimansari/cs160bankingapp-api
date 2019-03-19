@@ -119,7 +119,7 @@ app.post('/api/mydata', (req, res) => {
 
 });
 
-app.post('/api/validateLogin', (req, res) => {
+app.post('/api/', (req, res) => {
 		console.log('validateLogin called');
 
 		const{email, password, customer} = req.body;
@@ -191,32 +191,32 @@ app.post('/api/registerUser', (req, res) => {
 
 
 
-app.post('/api/', (req, res) => {
+// app.post('/api/', (req, res) => {
 
-// 	const{userId}  = req.session
+// // 	const{userId}  = req.session
 
-// 	res.send(`
+// // 	res.send(`
 
-// 		<h1>Welcome!</h1>
-// 		${userId ? `
-// 		<a href ='/login'>Login</a>
-// 		<a href = '/register'>Register</a>
+// // 		<h1>Welcome!</h1>
+// // 		${userId ? `
+// // 		<a href ='/login'>Login</a>
+// // 		<a href = '/register'>Register</a>
 
-// 		<a href = '/home'>Home</a>
-// 		<form method = 'post' action = '/logout'>
-// 			<button>Logout</button>
-// 		</form>
+// // 		<a href = '/home'>Home</a>
+// // 		<form method = 'post' action = '/logout'>
+// // 			<button>Logout</button>
+// // 		</form>
 
-// 		` : `
-// 		<a href = '/login'>Login</a>
-// 		<a href = '/register'>Register</a>
+// // 		` : `
+// // 		<a href = '/login'>Login</a>
+// // 		<a href = '/register'>Register</a>
 
-// 		`}
+// // 		`}
 
-// 	`)
-	res.send({express: 'hello'});
+// // 	`)
+// 	res.send({express: 'hello'});
 
-})
+// })
 
 // app.get('/home', redirectLogin, (req, res) => {
 
