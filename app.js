@@ -27,9 +27,6 @@ pool.connect(function(err, client, done) {
     query.on('row', (row) => {	//push data from database to data structure
 	 users.push(row);
     })
-    query.on('end', (res) => {	//shutdown of pool
-        pool.end()
-    })
     query.on('error', (res) => {	//error
         console.log(res);
     })
