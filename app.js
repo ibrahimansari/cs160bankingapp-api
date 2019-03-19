@@ -21,13 +21,13 @@ const users = []		//holds information about all customers
 
 var pg = require("pg");
 
-var connectionString = {
-  user: 'user',
-  host: 'host',
-  database: 'db',
-  password: 'pass',
-  port: 5432,
-};
+// var connectionString = {
+//   user: 'user',
+//   host: 'host',
+//   database: 'db',
+//   password: 'pass',
+//   port: 5432,
+// };
 
 var connectionString = {
    host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
@@ -154,12 +154,12 @@ app.post('/api/validateUser', (req, res) => {
 	//let val = 'Valid Login1';
 	//res.send(val);
 	
-	var query = client.query("SELECT * FROM customer_info");
+// 	var query = client.query("SELECT * FROM customer_info");
 
-	query.on("row", function (row, result) {
-	    users.addRow(row);
-	     console.log(row);
-	});
+// 	query.on("row", function (row, result) {
+// 	    users.addRow(row);
+// 	     console.log(row);
+// 	});
 	let val = 'Valid Login1';
 	res.send(val);
 	
