@@ -23,8 +23,6 @@ const users = []		//holds information about all customers
 
 client.connect()
 .then(() => console.log("Connection successfuly"))
-.then(()=>  client.query("select * from customer_info"))
-.then(results => users.push(results.rows))
 .catch(e => console.log(e))
 .finally(() => client.end())
 
@@ -119,33 +117,39 @@ app.post('/api/mydata', (req, res) => {
 
 });
 
+var query = client.query("SELECT * FROM customer_info");
+
+query.on("row", function (row, result) {
+    users.addRow(row);
+});
+
 app.post('/api/validateUser', (req, res) => {
-		console.log('validateLogin called');
-	let val = 'Valid Login1';
-	res.send(val);
+	console.log('validateLogin called');
+	//let val = 'Valid Login1';
+	//res.send(val);
 
-// 		const{email, password, customer} = req.body;
+		const{email, password, customer} = req.body;
 
-// 		if(email && password)
-// 		{
-// 			const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
+		if(email && password)
+		{
+			const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
 
-// 			if(user)
-// 			{
+			if(user)
+			{
 
-// 				req.session.userId = user.id;
-// 				let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
-// 				res.send(val);
-// 			}
-// 			else
-// 			{
-// 				res.send('Invalid Username and/or Password');
-// 			}
-// 		}
-// 		else
-// 			{
-// 				res.send('Invalid Username and/or Password');
-// 			}
+				req.session.userId = user.id;
+				let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
+				res.send(val);
+			}
+			else
+			{
+				res.send('Invalid Username and/or Password');
+			}
+		}
+		else
+			{
+				res.send('Invalid Username and/or Password');
+			}
 });
 
 
@@ -173,9 +177,9 @@ app.post('/api/registerUser', (req, res) => {
 			//store new user in db
 			let post = {id:user.id, first_name: user.first_name, last_name: user.last_name, email: user.email.toLowerCase(), password:user.password, customer:user.customer};
 			let sql = 'INSERT INTO customer_info SET ?';
-			let query = client.query(sql, post, (err, result) => {
-				if(err) throw err;
-			});
+			//let query = client.query(sql, post, (err, result) => {
+			//	if(err) throw err;
+			//});
 
 			res.send('Ok');
 		}else{
