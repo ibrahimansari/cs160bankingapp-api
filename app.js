@@ -117,39 +117,46 @@ app.post('/api/mydata', (req, res) => {
 
 });
 
-var query = client.query("SELECT * FROM customer_info");
-
-query.on("row", function (row, result) {
-    users.addRow(row);
-});
 
 app.post('/api/validateUser', (req, res) => {
 	console.log('validateLogin called');
 	//let val = 'Valid Login1';
 	//res.send(val);
+	
+	var query = client.query("SELECT * FROM customer_info");
 
-		const{email, password, customer} = req.body;
+	query.on("row", function (row, result) {
+	    users.addRow(row);
+	     console.log(row);
+	});
+	let val = 'Valid Login1';
+	res.send(val);
+	
+	
 
-		if(email && password)
-		{
-			const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
 
-			if(user)
-			{
+// 		const{email, password, customer} = req.body;
 
-				req.session.userId = user.id;
-				let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
-				res.send(val);
-			}
-			else
-			{
-				res.send('Invalid Username and/or Password');
-			}
-		}
-		else
-			{
-				res.send('Invalid Username and/or Password');
-			}
+// 		if(email && password)
+// 		{
+// 			const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
+
+// 			if(user)
+// 			{
+
+// 				req.session.userId = user.id;
+// 				let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
+// 				res.send(val);
+// 			}
+// 			else
+// 			{
+// 				res.send('Invalid Username and/or Password');
+// 			}
+// 		}
+// 		else
+// 			{
+// 				res.send('Invalid Username and/or Password');
+// 			}
 });
 
 
