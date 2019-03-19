@@ -170,11 +170,19 @@ app.post('/api/registerUser', (req, res) => {
 			req.session.userId = user.id
 
 			//store new user in db
-			let post = {id:user.id, first_name: user.first_name, last_name: user.last_name, email: user.email.toLowerCase(), password:user.password, customer:user.customer};
-			let sql = 'INSERT INTO customer_info SET ?';
+// 			let post = {id:user.id, first_name: user.first_name, last_name: user.last_name, email: user.email.toLowerCase(), password:user.password, customer:user.customer};
+// 			let sql = 'INSERT INTO customer_info SET ?';
 			//let query = client.query(sql, post, (err, result) => {
 			//	if(err) throw err;
 			//});
+			
+			//password, last_name, id, first_name, email, customer
+			pool.query('INSERT INTO customer_info (password, last_name, id, first_name, email, customer) VALUES ($1, $2, $3, $4, $5, $6)', [user.password, user.last_name, user.id, user.first_name, user.email.toLowerCase(), user.customer], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+			   // response.status(201).send(`User added with ID: ${result.insertId}`)
+			  })
 
 			res.send('Ok');
 		}else{
