@@ -4,30 +4,12 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const TWO_HOURS = 1000 * 60 * 60 * 2
 
-//const mysql = require('mysql');
-
 const app = express();
 app.use(cors());
 
-//const {Client} = require('pg')
-
-
-const users = []		//holds information about all customers
-
-// client.connect()
-// .then(() => console.log("Connection successfuly"))
-// .catch(e => console.log(e))
-// .finally(() => client.end())
+const users = []		//holds user information from database and newly created users
 
 var pg = require("pg");
-
-// var connectionString = {
-//   user: 'user',
-//   host: 'host',
-//   database: 'db',
-//   password: 'pass',
-//   port: 5432,
-// };
 
 var connectionString = {
    host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
@@ -42,23 +24,18 @@ var pool = new pg.Pool(connectionString);
 pool.connect(function(err, client, done) {
 
     const query = client.query(new pg.Query("SELECT * from customer_info"))
-    query.on('row', (row) => {
-        console.log(row);
+    query.on('row', (row) => {	//push data from database to data structure
 	 users.push(row);
     })
-    query.on('end', (res) => {
-        // pool shutdown
-        console.log("ending");
+    query.on('end', (res) => {	//shutdown of pool
         pool.end()
     })
-    query.on('error', (res) => {
+    query.on('error', (res) => {	//error
         console.log(res);
     })
 
     done()
 })
-
-//const PORT = process.env.PORT || 8080;
 
 const{
 	PORT = process.env.PORT || 8080,
@@ -70,7 +47,6 @@ const{
 }  = process.env
 
 const IN_PROD = NODE_ENV === 'production'
-
 
 
 app.use(bodyParser.json());
@@ -152,44 +128,23 @@ app.post('/api/mydata', (req, res) => {
 
 app.post('/api/validateUser', (req, res) => {
 	console.log('validateLogin called');
-	console.log(users);
-	//let val = 'Valid Login1';
-	//res.send(val);
-	
-// 	var query = client.query("SELECT * FROM customer_info");
 
-// 	query.on("row", function (row, result) {
-// 	    users.addRow(row);
-// 	     console.log(row);
-// 	});
-// 	let val = 'Valid Login1';
-// 	res.send(val);
-	
-	
+	const{email, password, customer} = req.body;
 
+	if(email && password){
+		const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
 
-		const{email, password, customer} = req.body;
+		if(user){
 
-		if(email && password)
-		{
-			const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
-
-			if(user)
-			{
-
-				req.session.userId = user.id;
-				let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
-				res.send(val);
-			}
-			else
-			{
-				res.send('Invalid Username and/or Password');
-			}
+			req.session.userId = user.id;
+			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
+			res.send(val);
+		}else{
+			res.send('Invalid Username and/or Password');
 		}
-		else
-			{
-				res.send('Invalid Username and/or Password');
-			}
+	}else{
+		res.send('Invalid Username and/or Password');
+	}
 });
 
 
