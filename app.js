@@ -123,12 +123,12 @@ app.post('/api/validateUser', (req, res) => {
 	//let val = 'Valid Login1';
 	//res.send(val);
 	
-	var query = client.query("SELECT * FROM customer_info");
+// 	var query = client.query("SELECT * FROM customer_info");
 
-	query.on("row", function (row, result) {
-	    users.addRow(row);
-	     console.log(row);
-	});
+// 	query.on("row", function (row, result) {
+// 	    users.addRow(row);
+// 	     console.log(row);
+// 	});
 	let val = 'Valid Login1';
 	res.send(val);
 	
