@@ -162,34 +162,34 @@ app.post('/api/validateUser', (req, res) => {
 // 	    users.addRow(row);
 // 	     console.log(row);
 // 	});
-	let val = 'Valid Login1';
-	res.send(val);
+// 	let val = 'Valid Login1';
+// 	res.send(val);
 	
 	
 
 
-// 		const{email, password, customer} = req.body;
+		const{email, password, customer} = req.body;
 
-// 		if(email && password)
-// 		{
-// 			const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
+		if(email && password)
+		{
+			const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
 
-// 			if(user)
-// 			{
+			if(user)
+			{
 
-// 				req.session.userId = user.id;
-// 				let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
-// 				res.send(val);
-// 			}
-// 			else
-// 			{
-// 				res.send('Invalid Username and/or Password');
-// 			}
-// 		}
-// 		else
-// 			{
-// 				res.send('Invalid Username and/or Password');
-// 			}
+				req.session.userId = user.id;
+				let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
+				res.send(val);
+			}
+			else
+			{
+				res.send('Invalid Username and/or Password');
+			}
+		}
+		else
+			{
+				res.send('Invalid Username and/or Password');
+			}
 });
 
 
