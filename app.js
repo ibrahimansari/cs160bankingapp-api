@@ -44,6 +44,7 @@ pool.connect(function(err, client, done) {
     const query = client.query(new pg.Query("SELECT * from customer_info"))
     query.on('row', (row) => {
         console.log(row);
+	 users.push(row);
     })
     query.on('end', (res) => {
         // pool shutdown
@@ -151,6 +152,7 @@ app.post('/api/mydata', (req, res) => {
 
 app.post('/api/validateUser', (req, res) => {
 	console.log('validateLogin called');
+	console.log(users);
 	//let val = 'Valid Login1';
 	//res.send(val);
 	
