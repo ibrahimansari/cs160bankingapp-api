@@ -191,7 +191,7 @@ app.post('/api/registerUser', (req, res) => {
 
 
 
-app.get('/', (req, res) => {
+app.get('/v', (req, res) => {
 
 // 	const{userId}  = req.session
 
