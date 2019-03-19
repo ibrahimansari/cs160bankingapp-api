@@ -9,22 +9,53 @@ const TWO_HOURS = 1000 * 60 * 60 * 2
 const app = express();
 app.use(cors());
 
-const {Client} = require('pg')
+//const {Client} = require('pg')
 
-const client = new Client({
-	host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
-    port: 5432,
-    user: 'xmfxzigqqctouo',
-    password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
-    database: 'dbds5lgqf1gspn'
-})
 
 const users = []		//holds information about all customers
 
-client.connect()
-.then(() => console.log("Connection successfuly"))
-.catch(e => console.log(e))
-.finally(() => client.end())
+// client.connect()
+// .then(() => console.log("Connection successfuly"))
+// .catch(e => console.log(e))
+// .finally(() => client.end())
+
+var pg = require("pg");
+
+var connectionString = {
+  user: 'user',
+  host: 'host',
+  database: 'db',
+  password: 'pass',
+  port: 5432,
+};
+
+var connectionString = {
+   host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
+    port: 5432,
+    user: 'xmfxzigqqctouo',
+    password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
+    database: 'dbds5lgqf1gspn',
+}
+
+var pool = new pg.Pool(connectionString);
+
+pool.connect(function(err, client, done) {
+
+    const query = client.query(new pg.Query("SELECT * from customer_info"))
+    query.on('row', (row) => {
+        console.log(row);
+    })
+    query.on('end', (res) => {
+        // pool shutdown
+        console.log("ending");
+        pool.end()
+    })
+    query.on('error', (res) => {
+        console.log(res);
+    })
+
+    done()
+})
 
 //const PORT = process.env.PORT || 8080;
 
