@@ -94,36 +94,8 @@ app.use((req, res, next)=>{
 	next()
 })
 
-app.post('/api/mydata', (req, res) => {
 
-	console.log("called");
-	var hold = req.session.userId;
-	var trueEmail = '';
-	for(var i = 0; i < users.length; i++){
-		if(users[i].id === hold){
-			trueEmail = users[i].email;
-			break;
-		}
-	}
-	// const d = [];
-	// var query2 = client.query('SELECT * FROM transaction');
-	// query2.on('result', function(row) {		//pushes all data from db to customers array
-	// 	d.push(row);
-	// });
-
-	// res.send(d);
-
-	res.send("hello")
-
-
-	// var sql = "SELECT * FROM transaction where email = ?";
-	// db.query(sql, trueEmail, function(err, rows, fields){});
-	
-
-});
-
-
-app.post('/api/validateUser', (req, res) => {
+app.post('/api/validateUser', (req, res) => {			//api for validating user when signing in
 	console.log('validateLogin called');
 
 	const{email, password, customer} = req.body;
@@ -145,7 +117,7 @@ app.post('/api/validateUser', (req, res) => {
 });
 
 
-app.post('/api/registerUser', (req, res) => {
+app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 	const {first_name, last_name, email, password, customer} = req.body
 
@@ -166,19 +138,10 @@ app.post('/api/registerUser', (req, res) => {
 
 			req.session.userId = user.id
 
-			//store new user in db
-// 			let post = {id:user.id, first_name: user.first_name, last_name: user.last_name, email: user.email.toLowerCase(), password:user.password, customer:user.customer};
-// 			let sql = 'INSERT INTO customer_info SET ?';
-			//let query = client.query(sql, post, (err, result) => {
-			//	if(err) throw err;
-			//});
-			
-			//password, last_name, id, first_name, email, customer
 			pool.query('INSERT INTO customer_info (password, last_name, id, first_name, email, customer) VALUES ($1, $2, $3, $4, $5, $6)', [user.password, user.last_name, user.id, user.first_name, user.email.toLowerCase(), user.customer], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
-			   // response.status(201).send(`User added with ID: ${result.insertId}`)
 			  })
 
 			res.send('Ok');
@@ -186,43 +149,13 @@ app.post('/api/registerUser', (req, res) => {
 			res.send('Email already in use');
 		}
   	}else{
-		//console.log('fail');
 		res.send('Fail'); 
 	  }
-	
-
 });
 
   
 
 
-
-// app.post('/api/', (req, res) => {
-
-// // 	const{userId}  = req.session
-
-// // 	res.send(`
-
-// // 		<h1>Welcome!</h1>
-// // 		${userId ? `
-// // 		<a href ='/login'>Login</a>
-// // 		<a href = '/register'>Register</a>
-
-// // 		<a href = '/home'>Home</a>
-// // 		<form method = 'post' action = '/logout'>
-// // 			<button>Logout</button>
-// // 		</form>
-
-// // 		` : `
-// // 		<a href = '/login'>Login</a>
-// // 		<a href = '/register'>Register</a>
-
-// // 		`}
-
-// // 	`)
-// 	res.send({express: 'hello'});
-
-// })
 
 // app.get('/home', redirectLogin, (req, res) => {
 
