@@ -11,6 +11,15 @@ const users = []		//holds user information from database and newly created users
 
 var pg = require("pg");
 
+var nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport({
+ service: 'gmail',
+ auth: {
+        user: 'bankteam160@gmail.com',
+        pass: 'Bankteam160cs'
+    }
+});
+
 var connectionString = {
    host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
     port: 5432,
@@ -165,7 +174,20 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 	  }
 });
 
+
+const mailOptions = {
+  from: 'bankteam160@gmail.com', // sender address
+  to: 'bankteam160@gmail.com', // list of receivers
+  subject: 'Reset Your Password', // Subject line
+  html: '<p>Your html here</p>'// plain text body
+};
   
+transporter.sendMail(mailOptions, function (err, info) {	//send the email
+   if(err)
+     console.log(err)
+   else
+     console.log(info);
+});
 
 
 
