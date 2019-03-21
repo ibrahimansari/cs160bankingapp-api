@@ -9,10 +9,10 @@ app.use(cors());
 
 const users = []		//holds user information from database and newly created users
 
-var pg = require("pg");
+var pg = require("pg");			//postgres
 
-var nodemailer = require('nodemailer');
-var transporter = nodemailer.createTransport({
+var nodemailer = require('nodemailer');		//nodemailer forgot my password
+var transporter = nodemailer.createTransport({	//set bank email password
  service: 'gmail',
  auth: {
         user: 'bankteam160@gmail.com',
@@ -20,7 +20,7 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-var connectionString = {
+var connectionString = {		//connect to db
    host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
     port: 5432,
     user: 'xmfxzigqqctouo',
