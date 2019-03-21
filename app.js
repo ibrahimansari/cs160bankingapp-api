@@ -21,6 +21,8 @@ var connectionString = {
 
 var pool = new pg.Pool(connectionString);
 
+const userTransaction = []		//holds user information from database and newly created users
+
 pool.connect(function(err, client, done) {
 
     const query = client.query(new pg.Query("SELECT * from customer_info"))
@@ -28,6 +30,14 @@ pool.connect(function(err, client, done) {
 	 users.push(row);
     })
     query.on('error', (res) => {	//error
+        console.log(res);
+    })
+	
+    const queryT = client.query(new pg.Query("SELECT * from transaction"))	//transaction data push from database
+    queryT.on('row', (row) => {	//push data from database to data structure
+	 userTransaction.push(row);
+    })
+    queryT.on('error', (res) => {	//error
         console.log(res);
     })
 
