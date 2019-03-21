@@ -126,9 +126,9 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 			req.session.userId = user.id;
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
-			var obj = {arr: userTransaction, value: val};
+			//var obj = {arr: userTransaction, value: val};
 
-			res.send(obj);
+			res.send({value: val});
 		}else{
 			res.send('Invalid Username and/or Password');
 		}
