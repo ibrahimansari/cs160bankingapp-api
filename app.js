@@ -134,7 +134,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
 
-			if(user.customer === 1){
+			if(user.customer === 1){	//if a customer, get only this customer's transactions
 				pool.connect(function(err, client, done) {
 					    const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
 
