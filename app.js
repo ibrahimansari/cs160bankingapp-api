@@ -131,12 +131,14 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			req.session.userId = user.id;
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
 			
-			
-			pool.query('SELECT date,amount,balance from transaction where email = $email order by date desc', (error, results) => {
+			    var query = "SELECT * FROM transaction WHERE email = '" + email + "'";
+
+			pool.query(query, (error, results) => {
 			    if (error) {
 			      throw error
 			    }
 				tr.push(results.rows);
+				
 			  })
 			
 			
