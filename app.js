@@ -9,7 +9,8 @@ app.use(cors());
 
 const users = []		//holds user information from database and newly created users
 
-var pg = require("pg");			//postgres
+//var pg = require("pg");			//postgres
+const Pool = require('pg').Pool
 
 var nodemailer = require('nodemailer');		//nodemailer forgot my password
 var transporter = nodemailer.createTransport({	//set bank email password
@@ -20,38 +21,62 @@ var transporter = nodemailer.createTransport({	//set bank email password
     }
 });
 
-var connectionString = {		//connect to db
+const pool = new Pool({
    host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
     port: 5432,
     user: 'xmfxzigqqctouo',
     password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
     database: 'dbds5lgqf1gspn',
-}
+})
 
-var pool = new pg.Pool(connectionString);
+// var connectionString = {		//connect to db
+//    host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
+//     port: 5432,
+//     user: 'xmfxzigqqctouo',
+//     password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
+//     database: 'dbds5lgqf1gspn',
+// }
+
+//var pool = new pg.Pool(connectionString);
 
 const userTransaction = []		//holds user information from database and newly created users
 
-pool.connect(function(err, client, done) {
+// pool.connect(function(err, client, done) {
 
-    const query = client.query(new pg.Query("SELECT * from customer_info"))
-    query.on('row', (row) => {	//push data from database to data structure
-	 users.push(row);
-    })
-    query.on('error', (res) => {	//error
-        console.log(res);
-    })
+//     const query = client.query(new pg.Query("SELECT * from customer_info"))
+//     query.on('row', (row) => {	//push data from database to data structure
+// 	 users.push(row);
+//     })
+//     query.on('error', (res) => {	//error
+//         console.log(res);
+//     })
 	
-    const queryT = client.query(new pg.Query("SELECT * from transaction"))	//transaction data push from database
-    queryT.on('row', (row) => {	//push data from database to data structure
-	 userTransaction.push(row);
-    })
-    queryT.on('error', (res) => {	//error
-        console.log(res);
-    })
+//     const queryT = client.query(new pg.Query("SELECT * from transaction"))	//transaction data push from database
+//     queryT.on('row', (row) => {	//push data from database to data structure
+// 	 userTransaction.push(row);
+//     })
+//     queryT.on('error', (res) => {	//error
+//         console.log(res);
+//     })
 
-    done()
-})
+//     done()
+// })
+
+
+//const getUsers = (request, response) => {
+  pool.query("SELECT * from customer_info", (error, results) => {
+    if (error) {
+      throw error
+    }
+    users.push(results.rows);
+  })
+  pool.query("SELECT * from transaction", (error, results) => {
+    if (error) {
+      throw error
+    }
+        userTransaction.push(results.rows);
+  })
+//}
 
 const{
 	PORT = process.env.PORT || 8080,
