@@ -149,8 +149,8 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 				    });
 
 				    done()
-				})
-			}
+			})
+			
 
 		}else{
 			res.json({value: 'Invalid Username and/or Password'});
