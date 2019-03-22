@@ -130,10 +130,10 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 			req.session.userId = user.id;
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
-			console.log(user.first_name);
+
 			pool.connect(function(err, client, done) {
 
-			    const query = client.query(new pg.Query("SELECT * from transaction where email=$1 order by date desc", [user.email]))
+			    const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
 			    query.on('row', (row) => {	//push transaction of user from database to data structure
 				    specificTransaction.push(row);
 			    })
@@ -141,7 +141,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 				console.log(res);
 			    })
 			   query.on("end", function (result) {
-				res.json({value:val, arr:specificTransaction, first: user.first_name});
+				res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: email});
 			    });
 
 			    done()
