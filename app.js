@@ -151,20 +151,20 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 				})
 			}else{
 				
-				const query = client.query(new pg.Query("SELECT * from transaction order by email"))
-				    query.on('row', (row) => {	//push all transactions database to data structure
-					   allTransaction.push(row);
-				    })
-				    query.on('error', (res) => {	//error
-					console.log(res);
-				    })
-				   query.on("end", function (result) {
-					res.json({value:val, transactions:allTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
+// 				const query = client.query(new pg.Query("SELECT * from transaction order by email"))
+// 				    query.on('row', (row) => {	//push all transactions database to data structure
+// 					   allTransaction.push(row);
+// 				    })
+// 				    query.on('error', (res) => {	//error
+// 					console.log(res);
+// 				    })
+// 				   query.on("end", function (result) {
+// 					res.json({value:val, transactions:allTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
 					  
-				    });
+// 				    });
 
-				    done()
-				})
+// 				    done()
+// 				})
 			}
 
 		}else{
