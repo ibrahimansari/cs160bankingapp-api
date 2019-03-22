@@ -130,13 +130,16 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			
 			req.session.userId = user.id;
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
-			
+			var hold;
 			pool.query('SELECT date,balance,amount from transaction where email=$1', [user.email.toLowerCase()], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
 				console.log(results.rows);
 				tr.push(results.rows);
+				hold = results.rows;
+				console.log("hello");
+				console.log(hold);
 			  })
 			
 // 			pool.query("SELECT * FROM tags WHERE email=$1", [email], (error, results) => {
