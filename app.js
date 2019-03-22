@@ -133,31 +133,33 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			req.session.userId = user.id;
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
 			let hold = [];
-// 			pool.query('SELECT date,balance,amount from transaction where email=$1', [user.email.toLowerCase()], (error, results) => {
-// 			    if (error) {
-// 			      throw error
-// 			    }
-// 				//console.log(results.rows);
-// 				//tr.push(results.rows);
-// 				hold.push(results.rows);
-// 				//console.log("ok");
+			pool.query('SELECT date,balance,amount from transaction where email=$1', [user.email.toLowerCase()], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+				//console.log(results.rows);
+				//tr.push(results.rows);
+				//hold.push(results.rows);
+				res.json({value: val, arr: results.rows});
+				//console.log("ok");
+			       
 
-// 			  });
-			pool.connect(function(err, client, done) {
+			  });
+// 			pool.connect(function(err, client, done) {
 
-				    const query = client.query(new pg.Query("SELECT * from transaction"))
-				    query.on('row', (row) => {	//push data from database to data structure
-					 h.push(row);
-				    })
-				    query.on('error', (res) => {	//error
-					console.log(res);
-				    })
+// 				    const query = client.query(new pg.Query("SELECT * from transaction"))
+// 				    query.on('row', (row) => {	//push data from database to data structure
+// 					 h.push(row);
+// 				    })
+// 				    query.on('error', (res) => {	//error
+// 					console.log(res);
+// 				    })
 
-				    done()
-				})
+// 				    done()
+// 				})
 
 
-			console.log(h);
+// 			console.log(h);
 			
 			res.json({value: val, arr: h});
 		}else{
