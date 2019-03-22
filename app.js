@@ -135,7 +135,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 			
 			pool.connect(function(err, client, done) {
-				 const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
+				 const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email])))
    
 				    query.on('row', (row) => {	//push transaction of user from database to data structure
 					    specificTransaction.push(row);
@@ -149,23 +149,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 				    done()
 				})
-			}//else{
-				
-// 				const query = client.query(new pg.Query("SELECT * from transaction order by email"))
-// 				    query.on('row', (row) => {	//push all transactions database to data structure
-// 					   allTransaction.push(row);
-// 				    })
-// 				    query.on('error', (res) => {	//error
-// 					console.log(res);
-// 				    })
-// 				   query.on("end", function (result) {
-// 					res.json({value:val, transactions:allTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
-					  
-// 				    });
-
-// 				    done()
-// 				})
-			//}
+			}
 
 		}else{
 			res.json({value: 'Invalid Username and/or Password'});
