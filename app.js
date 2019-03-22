@@ -156,6 +156,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 				    query.on('error', (res) => {	//error
 					console.log(res);
 				    })
+				res.json({value:val, arr:h});
 
 				    done()
 				})
@@ -163,7 +164,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
  			//console.log(h);
 			
-			res.json({value: val, arr: h});
+			//res.json({value: val, arr: h});
 		}else{
 			res.json({value: 'Invalid Username and/or Password'});
 		}
