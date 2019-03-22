@@ -156,7 +156,13 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 				    query.on('error', (res) => {	//error
 					console.log(res);
 				    })
-				res.json({value:val, arr:h});
+					query.on("end", function (result) {
+					// On end JSONify and write the results to console and to HTML output
+					//console.log(JSON.stringify(result.rows, null, "    "));
+					//res.writeHead(200, {'Content-Type': 'text/plain'});
+					//res.write(JSON.stringify(result.rows) + "\n");
+					res.json({value:val, arr:h});
+					});
 
 				    done()
 				})
