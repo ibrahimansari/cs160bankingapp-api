@@ -131,25 +131,48 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 		if(user){
 
 			req.session.userId = user.id;
+			
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
 
+			if(user.customer === 1){
+				pool.connect(function(err, client, done) {
+					    const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
+
+
+					    query.on('row', (row) => {	//push transaction of user from database to data structure
+						    specificTransaction.push(row);
+					    })
+					    query.on('error', (res) => {	//error
+						console.log(res);
+					    })
+					   query.on("end", function (result) {
+						res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
+					    });
+
+					    done()
+				})
 			
-			pool.connect(function(err, client, done) {
-				    const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
+			}else{
+				
+								pool.connect(function(err, client, done) {
+					    const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
 
-   
-				    query.on('row', (row) => {	//push transaction of user from database to data structure
-					    specificTransaction.push(row);
-				    })
-				    query.on('error', (res) => {	//error
-					console.log(res);
-				    })
-				   query.on("end", function (result) {
-					res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
-				    });
 
-				    done()
-			})
+					    query.on('row', (row) => {	//push transaction of user from database to data structure
+						    specificTransaction.push(row);
+					    })
+					    query.on('error', (res) => {	//error
+						console.log(res);
+					    })
+					   query.on("end", function (result) {
+						res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
+					    });
+
+					    done()
+				})
+				
+				
+			}
 			
 
 		}else{
