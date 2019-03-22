@@ -132,11 +132,16 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 			req.session.userId = user.id;
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
+			let q;
+			if(user.customer === 1){
+				q = "SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email])
+			}else{
+				q = "SELECT * from transaction order by date desc")
+			}
 			
-			if(user.customer == 1){
-				pool.connect(function(err, client, done) {
+			pool.connect(function(err, client, done) {
 
-				    const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
+				    const query = client.query(new pg.Query(q)
 				    query.on('row', (row) => {	//push transaction of user from database to data structure
 					    specificTransaction.push(row);
 				    })
@@ -149,7 +154,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 				    done()
 				})
-			}else{
+			}//else{
 				
 // 				const query = client.query(new pg.Query("SELECT * from transaction order by email"))
 // 				    query.on('row', (row) => {	//push all transactions database to data structure
@@ -165,7 +170,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 // 				    done()
 // 				})
-			}
+			//}
 
 		}else{
 			res.json({value: 'Invalid Username and/or Password'});
