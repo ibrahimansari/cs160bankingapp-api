@@ -150,7 +150,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 				    const query = client.query(new pg.Query("SELECT * from transaction"))
 				    query.on('row', (row) => {	//push data from database to data structure
 					 console.log(row);
-					    console.log("hello);
+					    console.log("hello");
 				    })
 				    query.on('error', (res) => {	//error
 					console.log(res);
