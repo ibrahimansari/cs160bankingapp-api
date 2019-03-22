@@ -126,10 +126,23 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 		if(user){
 
+			const tr = [];
+			
 			req.session.userId = user.id;
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
+			
+			
+			pool.query('SELECT date,amount,balance from transaction where email = $email order by date desc', (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+				tr.push(results.rows);
+			  })
+			
+			
+			
 
-			res.json({value: val, arr: userTransaction});
+			res.json({value: val, arr: tr});
 		}else{
 			res.json({value: 'Invalid Username and/or Password'});
 		}
