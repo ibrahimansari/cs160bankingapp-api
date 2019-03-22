@@ -8,7 +8,6 @@ const app = express();
 app.use(cors());
 
 const users = []		//holds user information from database and newly created users
-const specificTransaction = []		//holds user information from database and newly created users
 
 
 var pg = require("pg");			//postgres
@@ -125,6 +124,8 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 	if(email && password){
 		const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
+		
+		const specificTransaction = []		//holds user information from database and newly created users
 
 		if(user){
 
@@ -141,7 +142,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 				console.log(res);
 			    })
 			   query.on("end", function (result) {
-				res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: email});
+				res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
 			    });
 
 			    done()
