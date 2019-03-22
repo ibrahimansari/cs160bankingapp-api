@@ -32,7 +32,7 @@ var connectionString = {		//connect to db
 
 var pool = new pg.Pool(connectionString);
 
-const userTransaction = []		//holds user information from database and newly created users
+//const userTransaction = []		//holds user information from database and newly created users
 
 pool.connect(function(err, client, done) {
 
@@ -44,13 +44,13 @@ pool.connect(function(err, client, done) {
         console.log(res);
     })
 	
-    const queryT = client.query(new pg.Query("SELECT * from transaction"))	//transaction data push from database
-    queryT.on('row', (row) => {	//push data from database to data structure
-	 userTransaction.push(row);
-    })
-    queryT.on('error', (res) => {	//error
-        console.log(res);
-    })
+//     const queryT = client.query(new pg.Query("SELECT * from transaction"))	//transaction data push from database
+//     queryT.on('row', (row) => {	//push data from database to data structure
+// 	 userTransaction.push(row);
+//     })
+//     queryT.on('error', (res) => {	//error
+//         console.log(res);
+//     })
 
     done()
 })
@@ -126,7 +126,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 		const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
 		
 		const specificTransaction = []		//holds user information from database and newly created users
-		const allTransaction = []		//holds all transactions, this is for bank manager
+		//const allTransaction = []		//holds all transactions, this is for bank manager
 
 		if(user){
 
