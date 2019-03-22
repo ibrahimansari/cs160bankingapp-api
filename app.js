@@ -157,7 +157,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 				})
 
 
-			
+			console.log(h);
 			
 			res.json({value: val, arr: h});
 		}else{
