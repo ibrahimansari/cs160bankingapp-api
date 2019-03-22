@@ -136,7 +136,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			      throw error
 			    }
 				console.log(results.rows);
-				tr = results.rows;
+				tr.push(results.rows);
 			  })
 			
 // 			pool.query("SELECT * FROM tags WHERE email=$1", [email], (error, results) => {
