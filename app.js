@@ -152,10 +152,10 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 					    done()
 				})
 			
-			}else{
+			}else{		//if bank manager, then give list of all transactions of all customers
 				
-								pool.connect(function(err, client, done) {
-					    const query = client.query(new pg.Query("SELECT * from transaction"))
+				pool.connect(function(err, client, done) {
+					    const query = client.query(new pg.Query("SELECT * from transaction order by email asc, date desc"))
 
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
