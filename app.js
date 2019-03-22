@@ -137,7 +137,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			    if (error) {
 			      throw error
 			    }
-				tr.push(results.rows);
+				console.log(results.rows);
 				
 			  })
 			
