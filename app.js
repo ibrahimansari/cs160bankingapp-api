@@ -137,12 +137,10 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			pool.connect(function(err, client, done) {
 				 const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
 				 
-				if(user.customer === 1){
-				     query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
-
-				}else{
+				if(user.customer === 0){
 				     query = client.query(new pg.Query("SELECT * transaction where order by date desc"))
-				  }
+					console.log("hel;lo");
+				}
 				    
 				    
 				    query.on('row', (row) => {	//push transaction of user from database to data structure
