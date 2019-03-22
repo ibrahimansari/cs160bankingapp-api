@@ -126,27 +126,46 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 		const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
 		
 		const specificTransaction = []		//holds user information from database and newly created users
+		const allTransaction = []		//holds all transactions, this is for bank manager
 
 		if(user){
 
 			req.session.userId = user.id;
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
+			
+			if(user.customer == 1){
+				pool.connect(function(err, client, done) {
 
-			pool.connect(function(err, client, done) {
+				    const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
+				    query.on('row', (row) => {	//push transaction of user from database to data structure
+					    specificTransaction.push(row);
+				    })
+				    query.on('error', (res) => {	//error
+					console.log(res);
+				    })
+				   query.on("end", function (result) {
+					res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
+				    });
 
-			    const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1 order by date desc", [user.email]))
-			    query.on('row', (row) => {	//push transaction of user from database to data structure
-				    specificTransaction.push(row);
-			    })
-			    query.on('error', (res) => {	//error
-				console.log(res);
-			    })
-			   query.on("end", function (result) {
-				res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
-			    });
+				    done()
+				})
+			}else{
+				
+				const query = client.query(new pg.Query("SELECT * from transaction order by email"))
+				    query.on('row', (row) => {	//push all transactions database to data structure
+					   allTransaction.push(row);
+				    })
+				    query.on('error', (res) => {	//error
+					console.log(res);
+				    })
+				   query.on("end", function (result) {
+					res.json({value:val, transactions:allTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email});
+					  
+				    });
 
-			    done()
-			})
+				    done()
+				})
+			}
 
 		}else{
 			res.json({value: 'Invalid Username and/or Password'});
