@@ -221,6 +221,56 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 });
 
 
+app.post('/api/depositOrWithdraw', (req, res) => {	//api for deposit or withdrawal for a customer
+
+	const {date, email, amount, balance} = req.body
+	var total = balance + amount;
+	
+	if(total < 0){
+		res.send("Not enough money to withdraw");
+	}else{
+
+		pool.query('INSERT INTO transaction (date, email, amount, balance) VALUES ($1, $2, $3, $4)', [date, email, amount, total], (error, results) => {
+		    if (error) {
+		      throw error
+		    }
+		})
+	}
+});
+
+app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
+
+	const {email} = req.body
+	
+	var hold = 0;		//holds balance
+	
+	pool.connect(function(err, client, done) {
+	    const query = client.query(new pg.Query("SELECT balance from transaction where email=$1 order by date asc", [email]))
+
+	    query.on('row', (row) => {	//push transaction of user from database to data structure
+		    hold = row;
+	    })
+	    query.on('error', (res) => {	//error
+		console.log(res);
+	    })
+	   query.on("end", function (result) {
+		res.json({balanceUser: hold});
+	    });
+
+	    done()
+	})
+		
+});
+
+
+
+
+
+
+
+
+
+
 const mailOptions = {
   from: 'bankteam160@gmail.com', // sender address
   to: 'bankteam160@gmail.com', // list of receivers
