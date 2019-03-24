@@ -187,6 +187,13 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 	const {first_name, last_name, email, password, customer} = req.body
+	
+	var dateObj = new Date();
+	var month = dateObj.getUTCMonth() + 1; //months from 1-12
+	var day = dateObj.getUTCDate();
+	var year = dateObj.getUTCFullYear();
+
+	var date = year + "-" + month + "-" + day;
 
 	if( email && password){
 		const exists = users.some(user => user.email.toLowerCase() === email.toLowerCase())
@@ -206,6 +213,11 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			req.session.userId = user.id
 
 			pool.query('INSERT INTO customer_info (password, last_name, id, first_name, email, customer) VALUES ($1, $2, $3, $4, $5, $6)', [user.password, user.last_name, user.id, user.first_name, user.email.toLowerCase(), user.customer], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+			  })
+			pool.query('INSERT INTO transaction (date, email, amount, balance) VALUES ($1, $2, $3, $4)', [date, user.email.toLowerCase(), 0, 0], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
