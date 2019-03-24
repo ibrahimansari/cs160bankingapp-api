@@ -234,8 +234,15 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 
 app.post('/api/depositOrWithdraw', (req, res) => {	//api for deposit or withdrawal for a customer
+	
+	var dateObj = new Date();
+	var month = dateObj.getUTCMonth() + 1; //months from 1-12
+	var day = dateObj.getUTCDate();
+	var year = dateObj.getUTCFullYear();
 
-	const {date, email, amount, balance} = req.body
+	var date = year + "-" + month + "-" + day;
+
+	const {email, amount, balance} = req.body
 	var total = balance + amount;
 	
 	if(total < 0){
