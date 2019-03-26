@@ -186,7 +186,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 app.post('/api/registerUser', (req, res) => {				//api for user registration
 
-	const {first_name, last_name, email, password, customer} = req.body
+	const {first_name, last_name, email, password, confirmPassword, customer} = req.body
 	
 	var dateObj = new Date();
 	var month = dateObj.getUTCMonth() + 1; //months from 1-12
