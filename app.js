@@ -279,10 +279,6 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 	    done()
 	})
 	
-	console.log(hold);
-	
-	res.json({total:hold});
-		
 });
 
 
