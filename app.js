@@ -268,6 +268,8 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 
 	    query.on('row', (row) => {	//push transaction of user from database to data structure
 		    hold = row;
+		    console.log(row);
+		    console.log(hold);
 	    })
 	    query.on('error', (res) => {	//error
 		console.log(res);
