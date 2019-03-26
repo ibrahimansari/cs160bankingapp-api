@@ -264,7 +264,7 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 	var hold = 0;		//holds balance
 	
 	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT balance from transaction where email=$1 order by date asc", [email]))
+	    const query = client.query(new pg.Query("SELECT balance from transaction where email=$1 order by date desc LIMIT 1", [email]))
 
 	    query.on('row', (row) => {	//push transaction of user from database to data structure
 		    hold = row;
@@ -278,6 +278,10 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 
 	    done()
 	})
+	
+	console.log(hold);
+	
+	res.send(hold);
 		
 });
 
