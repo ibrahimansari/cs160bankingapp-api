@@ -294,30 +294,40 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 
 app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds from one bank account to another
 
-	const {emailFrom, emailTo, amount} = req.body
+	const {emailFrom, emailTo, amount, balance} = req.body
 	
-	//const hold = [];		//holds balance
+	if(amount > balance){
+		res.send("Error, not enough funds");	//if user doesn't have enough funds to transfer	
+	}
 	
-	//make sure emailFrom and emailTo are valid
-	//then make sure emailFrom's has enough funds to transfer
-	//then insert value amount into transaction table for the emailTo
-	//subtract amount from emailFrom in transaction table
 	
-	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT balance from transaction where email=$1 order by date desc LIMIT 1", [email]))
+	var found = false;				//boolean to check if emailTo user found
+	
+	for(var i = 0; i < users.length; i++){		//check if emailTo is a valid user
+		if(users[i].email === emailTo && users[i].customer === 1){	//if valid emailTo customer found
+			found = true;
+			break;
+		}
+	}
+	if(found === false){				//if emailTo customer not found
+		res.send("Error");
+	}
 
-	    query.on('row', (row) => {	//push transaction of user from database to data structure
-		    hold.push(row);
-	    })
-	    query.on('error', (res) => {	//error
-		console.log(res);
-	    })
-	   query.on("end", function (result) {
-		res.json({balanceUser: hold});
-	    });
-
-	    done()
+	//update emailTo's balance
+	pool.query('UPDATE transaction SET balance=balance+$1 WHERE email=$2', [amount, emailTo], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
 	})
+		
+	//update emailFrom's balance
+	pool.query('UPDATE transaction SET balance=balance-$1 WHERE email=$2', [amount, emailFrom], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})
+	
+	res.send("Ok");
 	
 });
 
