@@ -5,12 +5,12 @@ const cors = require('cors')
 const TWO_HOURS = 1000 * 60 * 60 * 2
 
 const app = express();
+var pg = require("pg");			//postgres
+
 app.use(cors());
 
 const users = []		//holds user information from database and newly created users
 
-
-var pg = require("pg");			//postgres
 
 var nodemailer = require('nodemailer');		//nodemailer forgot my password
 var transporter = nodemailer.createTransport({	//set bank email password
@@ -31,8 +31,6 @@ var connectionString = {		//connect to db
 }
 
 var pool = new pg.Pool(connectionString);
-
-//const userTransaction = []		//holds user information from database and newly created users
 
 pool.connect(function(err, client, done) {
 
