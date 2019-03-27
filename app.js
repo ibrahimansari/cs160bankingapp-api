@@ -292,7 +292,7 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 });
 
 
-app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds from one bank account to another
+app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds from one account to another account
 
 	const {emailFrom, emailTo, amount, balance} = req.body
 	
@@ -313,19 +313,30 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 		res.send("Error, customer not found");
 	}
 
-	//update emailTo's balance
-	pool.query('UPDATE transaction SET balance=balance+$1 WHERE email=$2', [amount, emailTo], (error, results) => {
+
+	var dateObj = new Date();
+	var month = dateObj.getUTCMonth() + 1; //months from 1-12
+	var day = dateObj.getUTCDate();
+	var year = dateObj.getUTCFullYear();
+
+	var date = year + "-" + month + "-" + day;
+
+	var total = balance - amount;	//emailFrom balannce
+	
+	var getBalance = 0;		//get the current balance from emailTo
+
+	pool.query('INSERT INTO transaction (date, email, amount, balance) VALUES ($1, $2, $3, $4)', [date, emailTo, amount, getBalance], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
-		
-	//update emailFrom's balance
-	pool.query('UPDATE transaction SET balance=balance-$1 WHERE email=$2', [amount, emailFrom], (error, results) => {
+	
+	pool.query('INSERT INTO transaction (date, email, amount, balance) VALUES ($1, $2, $3, $4)', [date, emailFrom, amount, total], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
+	
 	
 	res.send("Ok");
 	
