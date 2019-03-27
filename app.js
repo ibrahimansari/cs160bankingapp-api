@@ -336,7 +336,10 @@ app.post('/api/closeAccount', (req, res) => {	//api for closing bank account
 	})	
 	
 	for(var i = 0; i < users.length; i++){
-		console.log(users[i]);	
+		if(users[i].email === email){
+			users.splice(i,1);
+			break;
+		}
 	}
 });
 
