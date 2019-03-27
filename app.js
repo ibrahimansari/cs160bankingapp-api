@@ -14,8 +14,8 @@ const users = []		//holds user information from database and newly created users
 var idCount = 0;		//everytime a new user registers an account, idCount increases by 1
 
 
-var nodemailer = require('nodemailer');		//nodemailer forgot my password
-var transporter = nodemailer.createTransport({	//set bank email password
+var nodemailer = require('nodemailer');		//nodemailer for forgot my password
+var transporter = nodemailer.createTransport({	//set bank credentials
  service: 'gmail',
  auth: {
         user: 'bankteam160@gmail.com',
@@ -23,7 +23,7 @@ var transporter = nodemailer.createTransport({	//set bank email password
     }
 });
 
-const mailOptions = {			//mail structure for reset password
+const mailOptions = {	         //mail structure for reset password
   from: 'bankteam160@gmail.com', // sender address
   to: 'bankteam160@gmail.com', // list of receivers
   subject: 'Reset Your Password', // Subject line
@@ -39,7 +39,7 @@ transporter.sendMail(mailOptions, function (err, info) {	//send the email
 
 
 var connectionString = {		//connect to db
-   host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
+    host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
     port: 5432,
     user: 'xmfxzigqqctouo',
     password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
@@ -184,11 +184,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 					    done()
 				})
-				
-				
 			}
-			
-
 		}else{
 			res.json({value: 'Invalid Username and/or Password'});
 		}
@@ -338,6 +334,10 @@ app.post('/api/closeAccount', (req, res) => {	//api for closing bank account
 	      throw error
 	    }
 	})	
+	
+	for(var i = 0; i < users.length; i++){
+		console.log(users[i]);	
+	}
 });
 
 
