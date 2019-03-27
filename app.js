@@ -11,6 +11,8 @@ app.use(cors());
 
 const users = []		//holds user information from database and newly created users
 
+var idCount = 0;		//everytime a new user registers an account, idCount increases by 1
+
 
 var nodemailer = require('nodemailer');		//nodemailer forgot my password
 var transporter = nodemailer.createTransport({	//set bank email password
@@ -19,6 +21,20 @@ var transporter = nodemailer.createTransport({	//set bank email password
         user: 'bankteam160@gmail.com',
         pass: 'Bankteam160cs'
     }
+});
+
+const mailOptions = {			//mail structure for reset password
+  from: 'bankteam160@gmail.com', // sender address
+  to: 'bankteam160@gmail.com', // list of receivers
+  subject: 'Reset Your Password', // Subject line
+  html: '<p>Your html here</p>'// plain text body
+};
+  
+transporter.sendMail(mailOptions, function (err, info) {	//send the email
+   if(err)
+     console.log(err)
+   else
+     console.log(info);
 });
 
 
@@ -198,7 +214,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 	
 		if(!exists){			//if no user exists in db, create that user
 			const user = {
-				id: users.length + 1, 
+				id: idCount + 1, 
 				first_name,
 				last_name, 
 				email,
@@ -280,7 +296,7 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 });
 
 
-app.post('/api/transfer', (req, res) => {	//api for transferring funds from one bank account to another
+app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds from one bank account to another
 
 	const {emailFrom, emailTo, amount} = req.body
 	
@@ -310,27 +326,23 @@ app.post('/api/transfer', (req, res) => {	//api for transferring funds from one 
 });
 
 
+app.post('/api/closeAccount', (req, res) => {	//api for closing bank account
+	
+	const {email} = req.body
+	
+	//remove from customer info table in database
+	//remove customer from array 
 
-
-
-
-
-
-
-
-const mailOptions = {
-  from: 'bankteam160@gmail.com', // sender address
-  to: 'bankteam160@gmail.com', // list of receivers
-  subject: 'Reset Your Password', // Subject line
-  html: '<p>Your html here</p>'// plain text body
-};
-  
-transporter.sendMail(mailOptions, function (err, info) {	//send the email
-   if(err)
-     console.log(err)
-   else
-     console.log(info);
+	pool.query('DELETE FROM customer_info where email=$1', [email], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})	
 });
+
+
+
+
 
 
 
