@@ -310,7 +310,7 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 		}
 	}
 	if(found === false){				//if emailTo customer not found
-		res.send("Error");
+		res.send("Error, customer not found");
 	}
 
 	//update emailTo's balance
@@ -336,21 +336,20 @@ app.post('/api/closeAccount', (req, res) => {	//api for closing bank account
 	
 	const {email} = req.body
 	
-	//remove from customer info table in database
-	//remove customer from array 
-
-	pool.query('DELETE FROM customer_info where email=$1', [email], (error, results) => {
+	pool.query('DELETE FROM customer_info where email=$1', [email], (error, results) => {	//remove user from customer_info table in database
 	    if (error) {
 	      throw error
 	    }
 	})	
 	
-	for(var i = 0; i < users.length; i++){
+	for(var i = 0; i < users.length; i++){	//remove user from array
 		if(users[i].email === email){
 			users.splice(i,1);
 			break;
 		}
 	}
+	
+	res.send("Ok");
 });
 
 
