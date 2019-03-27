@@ -282,6 +282,36 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 });
 
 
+app.post('/api/transfer', (req, res) => {	//api for transferring funds from one bank account to another
+
+	const {emailFrom, emailTo, amount} = req.body
+	
+	//const hold = [];		//holds balance
+	
+	//make sure emailFrom and emailTo are valid
+	//then make sure emailFrom's has enough funds to transfer
+	//then insert value amount into transaction table for the emailTo
+	//subtract amount from emailFrom in transaction table
+	
+	pool.connect(function(err, client, done) {
+	    const query = client.query(new pg.Query("SELECT balance from transaction where email=$1 order by date desc LIMIT 1", [email]))
+
+	    query.on('row', (row) => {	//push transaction of user from database to data structure
+		    hold.push(row);
+	    })
+	    query.on('error', (res) => {	//error
+		console.log(res);
+	    })
+	   query.on("end", function (result) {
+		res.json({balanceUser: hold});
+	    });
+
+	    done()
+	})
+	
+});
+
+
 
 
 
