@@ -346,22 +346,15 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 });
 
 
-app.post('/api/closeAccount', (req, res) => {	//api for closing bank account
+app.post('/api/closeAccount', (req, res) => {	//api for closing either a savings or checking bank account
 	
-	const {email, type} = req.body
+	const {email, type} = req.body		//type represents savings or checking account
 	
-	pool.query('UPDATE  customer_info where email=$1', [email], (error, results) => {	//remove user from customer_info table in database
+	pool.query('UPDATE bank_accounts SET status='Closed' where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
 	    if (error) {
 	      throw error
 	    }
 	})	
-	
-	for(var i = 0; i < users.length; i++){	//remove user from array
-		if(users[i].email === email){
-			users.splice(i,1);
-			break;
-		}
-	}
 	
 	res.send("Ok");
 });
