@@ -314,7 +314,7 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 });
 
 
-app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds from one account to another account (internal)
+app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds from one account to another account (internal)
 
 	const {emailFrom, emailTo, amount, balance} = req.body
 	
@@ -391,6 +391,46 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 });
 
 
+app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds to external
+
+	const {emailFrom, amount, balance} = req.body
+	
+	if(amount > balance){
+		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
+	}
+	
+	var fromFirstName = '';
+	var fromLastName = '';
+
+	for(var i = 0; i < users.length; i++){		//check if emailTo is a valid user
+		if(users[i].email === emailFrom){
+			fromFirstName = users[i].first_name;
+			fromLastName = users[i].last_name;
+		}
+	}
+
+	var dateObj = new Date();
+	var month = dateObj.getUTCMonth() + 1; //months from 1-12
+	var day = dateObj.getUTCDate();
+	var year = dateObj.getUTCFullYear();
+
+	var date = year + "-" + month + "-" + day;
+
+	var total = balance - amount;	//emailFrom balannce
+	
+	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})
+	
+	count= count+1;
+	
+	res.send("Ok");
+	
+});
+
+
 app.post('/api/closeAccount', (req, res) => {	//api for closing either a savings or checking bank account
 	
 	const {email, type} = req.body		//type represents savings or checking account
@@ -430,8 +470,6 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 
 
 
-
-
-
-
 app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
+
+
