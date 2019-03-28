@@ -339,18 +339,6 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 	var getBalance = 0;		//get the current balance from emailTo
 	var data = []'
 	
-
-	pool.query('INSERT INTO transaction (date, email, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [date, emailTo, amount, getBalance, toFirstName, toLastName], (error, results) => {
-	    if (error) {
-	      throw error
-	    }
-	})
-	
-	pool.query('INSERT INTO transaction (date, email, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [date, emailFrom, amount, total, fromFirstName, fromLastName], (error, results) => {
-	    if (error) {
-	      throw error
-	    }
-	})
 	
 	
 	res.send("Ok");
