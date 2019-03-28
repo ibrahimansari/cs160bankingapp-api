@@ -300,7 +300,7 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 });
 
 
-app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds from one account to another account
+app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds from one account to another account (internal)
 
 	const {emailFrom, emailTo, amount, balance} = req.body
 	
@@ -389,6 +389,34 @@ app.post('/api/closeAccount', (req, res) => {	//api for closing either a savings
 	
 	res.send("Ok");
 });
+
+
+app.post('/api/openAccount', (req, res) => {	//api for opening either a savings or checking bank account
+	
+	const {email, type} = req.body		//type represents savings or checking account
+	
+	if(type === 'savings){
+	
+		pool.query('UPDATE bank_accounts SET status='Open' where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
+		    if (error) {
+		      throw error
+		    }
+		})	
+		savingsAccountNumber = savingsAccountNumber+1;
+	}else{
+	 
+	 	pool.query('UPDATE bank_accounts SET status='Open' where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
+		    if (error) {
+		      throw error
+		    }
+		})	
+		checkingAccountNumber = checkingAccountNumber+1;
+	 }
+	
+	res.send("Ok");
+});
+
+
 
 
 
