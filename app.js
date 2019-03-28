@@ -442,14 +442,14 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 	
 	if(type === 'savings'){
 	
-		pool.query('UPDATE bank_accounts SET status='Open' where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
+		pool.query('UPDATE bank_accounts SET status="Open" where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
 		    if (error) {
 		      throw error
 		    }
 		})	
 	}else{
 	 
-	 	pool.query('UPDATE bank_accounts SET status='Open' where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
+	 	pool.query('UPDATE bank_accounts SET status="Open" where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
 		    if (error) {
 		      throw error
 		    }
