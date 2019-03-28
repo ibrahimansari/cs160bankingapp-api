@@ -11,7 +11,7 @@ app.use(cors());
 
 const users = []			//holds user information from database and newly created users
 
-var idCount = 1;			//everytime a new user registers an account, idCount increases by 1
+var idCount = 0;			//everytime a new user registers an account, idCount increases by 1
 var savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 and is incremented each time an account of this type is opened
 var checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
 
