@@ -145,6 +145,10 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 	const {first_name, last_name, email, password, confirmPassword, customer, address, zipcode} = req.body
 	
+	if(password != confirmPassword){
+		res.send("Passwords do not match");	
+	}
+	
 	var dateObj = new Date();
 	var month = dateObj.getUTCMonth() + 1; //months from 1-12
 	var day = dateObj.getUTCDate();
