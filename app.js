@@ -27,19 +27,6 @@ var transporter = nodemailer.createTransport({	//set bank credentials
     }
 });
 
-const mailOptions = {	         //mail structure for reset password
-  from: 'bankteam160@gmail.com', // sender address
-  to: 'bankteam160@gmail.com', // list of receivers
-  subject: 'Reset Your Password', // Subject line
-  html: '<p>Your html here</p>'// plain text body
-};
-  
-transporter.sendMail(mailOptions, function (err, info) {	//send the email
-   if(err)
-     console.log(err)
-   else
-     console.log(info);
-});
 
 
 var connectionString = {		//connect to db
@@ -446,6 +433,37 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 	res.send("Ok");
 });
 
+
+app.post('/api/resetPassword', (req, res) => {
+	
+	const {email} = req.body;
+	
+	const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
+	
+	if(user){
+	
+		const mailOptions = {	         //mail structure for reset password
+		  from: 'bankteam160@gmail.com', // sender address
+		  to: 'bankteam160@gmail.com',   // change receiver to email
+		  subject: 'Reset Your Password', // Subject line
+		  html: '<p>Your html here</p>'// plain text body
+		};
+
+		transporter.sendMail(mailOptions, function (err, info) {	//send the email
+		   if(err)
+		     console.log(err)
+		   else
+		     console.log(info);
+		});
+		
+		res.send("Ok");
+		
+	}else{
+		res.send("Error, email not found");	
+	}
+
+	
+});
 
 
 app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
