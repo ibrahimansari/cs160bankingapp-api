@@ -141,6 +141,8 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 
 app.post('/api/registerUser', (req, res) => {				//api for user registration
+	
+	console.log(users);
 
 	const {first_name, last_name, email, password, confirmPassword, customer, address, zipcode} = req.body
 	
