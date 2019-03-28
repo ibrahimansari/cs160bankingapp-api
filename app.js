@@ -395,7 +395,7 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 	
 	const {email, type} = req.body		//type represents savings or checking account
 	
-	if(type === 'savings){
+	if(type === 'savings'){
 	
 		pool.query('UPDATE bank_accounts SET status='Open' where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
 		    if (error) {
