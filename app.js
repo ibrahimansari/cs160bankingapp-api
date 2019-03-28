@@ -236,6 +236,8 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			      throw error
 			    }
 			  })
+			
+			count = count+1;
 
 			res.send('Ok');
 		}else{
@@ -268,6 +270,8 @@ app.post('/api/depositOrWithdraw', (req, res) => {	//api for deposit or withdraw
 		      throw error
 		    }
 		})
+		
+		count = count+1;
 	}
 });
 
