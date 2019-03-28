@@ -237,6 +237,20 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			    }
 			  })
 			
+			//balance, first_name, last_name, email, account_number, status, type
+			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, savingsAccountNumber, 'Closed' ,'savings'], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+			})
+			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, checkingAccountNumber, 'Closed' ,'checking'], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+			})
+			
+			checkingAccountNumber = checkingAccountNumber+1;
+			savingsAccountNumber = savingsAccountNumber+1;
 			count = count+1;
 
 			res.send('Ok');
@@ -402,7 +416,6 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 		      throw error
 		    }
 		})	
-		savingsAccountNumber = savingsAccountNumber+1;
 	}else{
 	 
 	 	pool.query('UPDATE bank_accounts SET status='Open' where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
@@ -410,7 +423,6 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 		      throw error
 		    }
 		})	
-		checkingAccountNumber = checkingAccountNumber+1;
 	 }
 	
 	res.send("Ok");
