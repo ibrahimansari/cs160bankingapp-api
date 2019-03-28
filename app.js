@@ -73,6 +73,7 @@ pool.connect(function(err, client, done) {
     done()
 })
 
+console.log(users);
 
 const{
 	PORT = process.env.PORT || 8080,
@@ -92,39 +93,7 @@ app.use(bodyParser.urlencoded({
 	extended:true
 }))
 
-app.use(session({
 
-	name:  SESS_NAME, 
-	resave: false,
-	saveUninitialized: false,
-	secret: SESS_SECRET, 
-	cookie:{
-		maxAge: SESS_LIFETIME,
-		sameSite: true,
-		secure: IN_PROD
-	}
-}))
-
-
-const redirectLogin = (req, res, next) => {
-
-	if(!req.session.userId){
-		res.redirect('/login')
-	}else{
-		next()
-	}
-
-}
-
-const redirectHome = (req, res, next) => {
-
-	if(req.session.userId){
-		res.redirect('/home')
-	}else{
-		next()
-	}
-
-}
 
 app.use((req, res, next)=>{
 	const {userId} = req.session
