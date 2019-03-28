@@ -300,7 +300,7 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 	const {emailFrom, emailTo, amount, balance} = req.body
 	
 	if(amount > balance){
-		res.send("Error, not enough funds");	//if user doesn't have enough funds to transfer	
+		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
 	}
 	
 	
@@ -337,6 +337,23 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 	var total = balance - amount;	//emailFrom balannce
 	
 	var getBalance = 0;		//get the current balance from emailTo
+	var data = []'
+	
+	pool.connect(function(err, client, done) {
+	    const query = client.query(new pg.Query("SELECT * from transaction where email=$1 order by email asc, date desc LIMIT 1", [emailTo]))
+
+	    query.on('row', (row) => {	//push transaction of user from database to data structure
+		    data.push(row);
+	    })
+	    query.on('error', (res) => {	//error
+		console.log(res);
+	    })
+	   query.on("end", function (result) {
+	    });
+	    done()
+	})
+	
+	getBalance = data[0].balance;
 
 	pool.query('INSERT INTO transaction (date, email, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [date, emailTo, amount, getBalance, toFirstName, toLastName], (error, results) => {
 	    if (error) {
