@@ -93,16 +93,6 @@ app.use(bodyParser.urlencoded({
 }))
 
 
-
-app.use((req, res, next)=>{
-	const {userId} = req.session
-	if(userId){
-		res.locals.user = users.find(user => user.id === userId)
-	}
-	next()
-})
-
-
 app.post('/api/validateUser', (req, res) => {			//api for validating user when signing in
 	
 	console.log("****************");
