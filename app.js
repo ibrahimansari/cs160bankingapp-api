@@ -9,9 +9,12 @@ var pg = require("pg");			//postgres
 
 app.use(cors());
 
-const users = []		//holds user information from database and newly created users
+const users = []			//holds user information from database and newly created users
 
-var idCount = 0;		//everytime a new user registers an account, idCount increases by 1
+var idCount = 0;			//everytime a new user registers an account, idCount increases by 1
+var savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 and is incremented each time an account of this type is opened
+var checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
+
 
 
 var nodemailer = require('nodemailer');		//nodemailer for forgot my password
@@ -345,9 +348,9 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 
 app.post('/api/closeAccount', (req, res) => {	//api for closing bank account
 	
-	const {email} = req.body
+	const {email, type} = req.body
 	
-	pool.query('DELETE FROM customer_info where email=$1', [email], (error, results) => {	//remove user from customer_info table in database
+	pool.query('UPDATE  customer_info where email=$1', [email], (error, results) => {	//remove user from customer_info table in database
 	    if (error) {
 	      throw error
 	    }
@@ -365,96 +368,6 @@ app.post('/api/closeAccount', (req, res) => {	//api for closing bank account
 
 
 
-
-
-
-
-// app.get('/home', redirectLogin, (req, res) => {
-
-// 	const {user} = res.locals
-
-// 	res.send(`
-
-// 		<h1>Home</h1>
-// 		<a href = '/'>Main</a>
-// 		<ul>
-// 			<li>Name: ${user.first_name}</li>
-// 			<li>Email: ${user.email}</li>
-// 		</ul>
-
-// 	`)
-// })
-
-
-// app.get('/login', redirectHome, (req, res) => {
-
-// 	res.send(`
-
-// 		<h1>Login</h1>
-// 		<form method='post' action='/login'>
-
-// 			<input type='email' name='email' placeholder='Email' required />
-// 			<input type='password' name='password' placeholder='Password' required />
-// 			<input type = 'submit' />
-// 		</form>
-// 		<a href = '/register'>Register</a>
-
-// 	`)
-// })
-
-// app.get('/register', redirectHome, (req, res) => {
-
-// 	res.send(`
-
-// 		<h1>Register</h1>
-// 		<form method='post' action='/register'>
-// 		<input name='first_name' placeholder='First Name' required />
-// 		<input name='last_name' placeholder='Last Name' required />
-// 		<input type='email' name='email' placeholder='Email' required />
-// 		<input type='password' name='password' placeholder='Password' required />
-// 		<select name="customer" id="customer">
-// 	        <option value="No">I'm NOT a customer</option>
-// 	        <option value="Yes">I'm a customer</option>
-//     	</select>
-
-// 		<input type = 'submit' />
-// 		</form>
-// 		<a href = '/login'>Login</a>
-
-
-// 	`)
-// })
-
-
-// app.post('/login', redirectHome, (req, res) => {
-// 	console.log('logging in');
-
-// 	const{email, password} = req.body
-
-// 	if(email && password){
-// 		const user = users.find(user => user.email === email && user.password === password)
-
-// 		if(user){
-// 			req.session.userId = user.id
-// 			return res.redirect('/home')
-// 		}
-// 	}
-
-// 	res.redirect('/login')
-// })
-
-
-// app.post('/logout', redirectLogin, (req, res) => {
-
-// 	req.session.destroy(err=> {
-// 		if(err){
-// 			return res.redirect('/home')
-// 		}
-// 		res.clearCookie(SESS_NAME)
-// 		res.redirect('/login')
-// 	})
-
-// })
 
 
 app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
