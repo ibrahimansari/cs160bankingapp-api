@@ -15,6 +15,7 @@ var idCount = 0;			//everytime a new user registers an account, idCount increase
 var savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 and is incremented each time an account of this type is opened
 var checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
 
+var count = 0;				//count for transactions table
 
 
 var nodemailer = require('nodemailer');		//nodemailer for forgot my password
@@ -230,7 +231,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			      throw error
 			    }
 			  })
-			pool.query('INSERT INTO transaction (date, email, amount, balance) VALUES ($1, $2, $3, $4)', [date, user.email.toLowerCase(), 0, 0], (error, results) => {
+			pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, user.email.toLowerCase(), date, 0, 0, user.first_name, user.last_name], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
@@ -262,7 +263,7 @@ app.post('/api/depositOrWithdraw', (req, res) => {	//api for deposit or withdraw
 		res.send("Not enough money to withdraw");
 	}else{
 
-		pool.query('INSERT INTO transaction (date, email, amount, balance) VALUES ($1, $2, $3, $4)', [date, email, amount, total], (error, results) => {
+		pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, email, date, amount, total, first_name, last_name], (error, results) => {
 		    if (error) {
 		      throw error
 		    }
@@ -350,17 +351,22 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 	})
 	
 	getBalance = data[0].balance;
-	pool.query('INSERT INTO transaction (date, email, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [date, emailTo, amount, getBalance, toFirstName, toLastName], (error, results) => {
+
+	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, emailTo, date, amount, getBalance, toFirstName, toLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 	
-	pool.query('INSERT INTO transaction (date, email, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [date, emailFrom, amount, total, fromFirstName, fromLastName], (error, results) => {
+	count = count+1;
+	
+	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
+	
+	count= count+1;
 	
 	res.send("Ok");
 	
