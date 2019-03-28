@@ -340,13 +340,13 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 	var data = []'
 	
 	
-	client.query('SELECT * from transaction where email=$1 order by email asc, date desc LIMIT 1', [emailTo], (err, res) => {
-	  if (err) {
-	    console.log(err.stack)
-	  } else {
-	    data.push(res.rows[0])
-	  }
-	})
+// 	client.query('SELECT * from transaction where email=$1 order by email asc, date desc LIMIT 1', [emailTo], (err, res) => {
+// 	  if (err) {
+// 	    console.log(err.stack)
+// 	  } else {
+// 	    data.push(res.rows[0])
+// 	  }
+// 	})
 	
 	getBalance = data[0].balance;
 
