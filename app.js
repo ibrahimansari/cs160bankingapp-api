@@ -305,11 +305,21 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 	
 	
 	var found = false;				//boolean to check if emailTo user found
+	var fromFirstName = '';
+	var fromLastName = '';
+	var toFirstName = '';
+	var toLastName = '';
 	
 	for(var i = 0; i < users.length; i++){		//check if emailTo is a valid user
 		if(users[i].email === emailTo && users[i].customer === 1){	//if valid emailTo customer found
 			found = true;
-			break;
+			toFirstName = users[i].first_name;
+			toLastName = users[i].last_name;
+			//break;
+		}
+		if(users[i].email === emailFrom){
+			fromFirstName = users[i].first_name;
+			fromLastName = users[i].last_name;
 		}
 	}
 	if(found === false){				//if emailTo customer not found
@@ -328,13 +338,13 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 	
 	var getBalance = 0;		//get the current balance from emailTo
 
-	pool.query('INSERT INTO transaction (date, email, amount, balance) VALUES ($1, $2, $3, $4)', [date, emailTo, amount, getBalance], (error, results) => {
+	pool.query('INSERT INTO transaction (date, email, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [date, emailTo, amount, getBalance, toFirstName, toLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 	
-	pool.query('INSERT INTO transaction (date, email, amount, balance) VALUES ($1, $2, $3, $4)', [date, emailFrom, amount, total], (error, results) => {
+	pool.query('INSERT INTO transaction (date, email, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [date, emailFrom, amount, total, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
