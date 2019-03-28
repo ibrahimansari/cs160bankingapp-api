@@ -94,9 +94,6 @@ app.use(bodyParser.urlencoded({
 
 
 app.post('/api/validateUser', (req, res) => {			//api for validating user when signing in
-	
-	console.log("****************");
-	console.log(users);
 
 	console.log('validateLogin called');
 
@@ -106,11 +103,9 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 		const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
 		
 		const specificTransaction = []		//holds user information from database and newly created users
-		//const allTransaction = []		//holds all transactions, this is for bank manager
 
 		if(user){
 
-			
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
 
 			if(user.customer === 1){	//if a customer, get only this customer's transactions
