@@ -425,7 +425,8 @@ app.post('/api/closeAccount', (req, res) => {	//api for closing either a savings
 	
 	const {email, type} = req.body		//type represents savings or checking account
 	
-	pool.query('UPDATE bank_accounts SET status='Closed' where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
+
+	pool.query('UPDATE bank_accounts SET status="Closed" where email=$1 AND type=$2', [email, type], (error, results) => {	
 	    if (error) {
 	      throw error
 	    }
