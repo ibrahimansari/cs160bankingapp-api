@@ -120,7 +120,6 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 		if(user){
 
-			req.session.userId = user.id;
 			
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
 
