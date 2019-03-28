@@ -339,18 +339,13 @@ app.post('/api/transferToAccount', (req, res) => {	//api for transferring funds 
 	var getBalance = 0;		//get the current balance from emailTo
 	var data = []'
 	
-	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT * from transaction where email=$1 order by email asc, date desc LIMIT 1", [emailTo]))
-
-	    query.on('row', (row) => {	//push transaction of user from database to data structure
-		    data.push(row);
-	    })
-	    query.on('error', (res) => {	//error
-		console.log(res);
-	    })
-	   query.on("end", function (result) {
-	    });
-	    done()
+	
+	client.query('SELECT * from transaction where email=$1 order by email asc, date desc LIMIT 1", [emailTo]', (err, res) => {
+	  if (err) {
+	    console.log(err.stack)
+	  } else {
+	    data.push(res.rows[0])
+	  }
 	})
 	
 	getBalance = data[0].balance;
