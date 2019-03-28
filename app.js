@@ -142,7 +142,6 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 app.post('/api/registerUser', (req, res) => {				//api for user registration
 	
-	console.log(users);
 
 	const {first_name, last_name, email, password, confirmPassword, customer, address, zipcode} = req.body
 	
@@ -199,7 +198,8 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			checkingAccountNumber = checkingAccountNumber+1;
 			savingsAccountNumber = savingsAccountNumber+1;
 			count = count+1;
-
+			console.log(count);
+			
 			res.send('Ok');
 		}else{
 			res.send('Email already in use');
