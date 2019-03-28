@@ -353,7 +353,6 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 
 	var date = year + "-" + month + "-" + day;
 
-	var total = balance - amount;	//emailFrom balannce
 	
 	var getBalance = 0;		//get the current balance from emailTo
 	var data = [];
@@ -369,6 +368,15 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	})
 	
 	getBalance = data[0].balance;
+	
+	var total = 0;	//emailFrom balannce
+
+	if(amount > 0){				//if amount passed in to be transferred is not negative
+		 total = balance - amount;	//emailFrom balannce
+	}else{
+		amount = amount*-1;		//if amount is negative, make it positive to store for customer receiving money
+		total = balance - amount;
+	}
 
 	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, emailTo, date, amount, getBalance, toFirstName, toLastName], (error, results) => {
 	    if (error) {
@@ -378,6 +386,9 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	
 	count = count+1;
 	
+	if(amount > 0){
+		amount = amount * -1;	//store for customer sending the money so needs to be negative
+	}
 	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
@@ -416,7 +427,17 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 
 	var date = year + "-" + month + "-" + day;
 
-	var total = balance - amount;	//emailFrom balannce
+	var total = 0;
+	if(amount > 0){				//if amount passed in to be transferred is not negative
+		total = balance - amount;	//emailFrom balannce
+	}else{
+		amount = amount*-1;		//if amount is negative, make it positive to store for customer receiving money
+		total = balance - amount;
+	}
+	
+	if(amount > 0){
+		amount = amount * -1;	
+	}
 	
 	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
@@ -424,7 +445,7 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	    }
 	})
 	
-	count= count+1;
+	count=count+1;
 	
 	res.send("Ok");
 	
