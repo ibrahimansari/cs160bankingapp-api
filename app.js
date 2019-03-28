@@ -169,7 +169,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 			users.push(user)
 
-			pool.query('INSERT INTO customer_info (password, last_name, id, first_name, email, customer) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [user.password, user.last_name, user.id, user.first_name, user.email.toLowerCase(), user.customer, user.address, user.zipcode], (error, results) => {
+			pool.query('INSERT INTO customer_info (password, last_name, id, first_name, email, customer, address, zipcode) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [user.password, user.last_name, user.id, user.first_name, user.email.toLowerCase(), user.customer, user.address, user.zipcode], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
