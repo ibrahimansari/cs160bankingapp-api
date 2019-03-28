@@ -73,7 +73,6 @@ pool.connect(function(err, client, done) {
     done()
 })
 
-console.log(users);
 
 const{
 	PORT = process.env.PORT || 8080,
@@ -105,6 +104,10 @@ app.use((req, res, next)=>{
 
 
 app.post('/api/validateUser', (req, res) => {			//api for validating user when signing in
+	
+	console.log("****************");
+	console.log(users);
+
 	console.log('validateLogin called');
 
 	const{email, password, customer} = req.body;
