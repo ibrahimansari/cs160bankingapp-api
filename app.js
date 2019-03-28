@@ -11,7 +11,6 @@ app.use(cors());
 
 const users = []			//holds user information from database and newly created users
 
-var idCount = 0;			//everytime a new user registers an account, idCount increases by 1
 var savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 and is incremented each time an account of this type is opened
 var checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
 
@@ -161,7 +160,6 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 	
 		if(!exists){			//if no user exists in db, create that user
 			const user = {
-				id: idCount + 1, 
 				first_name,
 				last_name, 
 				email,
@@ -173,7 +171,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 			users.push(user)
 
-			pool.query('INSERT INTO customer_info (password, last_name, id, first_name, email, customer, address, zipcode) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [user.password, user.last_name, user.id, user.first_name, user.email.toLowerCase(), user.customer, user.address, user.zipcode], (error, results) => {
+			pool.query('INSERT INTO customer_info (password, last_name, first_name, email, customer, address, zipcode) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.password, user.last_name, user.first_name, user.email.toLowerCase(), user.customer, user.address, user.zipcode], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
