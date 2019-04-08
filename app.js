@@ -239,28 +239,57 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	var date = year + "-" + month + "-" + day;
 
 	const {first_name, last_name, email, amount, balance} = req.body
-	var total = balance + amount;
+	var total = balance + amount;	//add amount to users checking
+	
+
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [email, date, amount, total, first_name, last_name], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})
+
+	//update balance of checking
+	pool.query('UPDATE bank_accounts SET status=$1 where email=$2 AND type="checking"', [total, email], (error, results) => {	
+	    if (error) {
+	      throw error
+	    }
+	})	
+	count = count+1;
+});
+
+app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from checking
+	
+	var dateObj = new Date();
+	var month = dateObj.getUTCMonth() + 1; //months from 1-12
+	var day = dateObj.getUTCDate();
+	var year = dateObj.getUTCFullYear();
+
+	var date = year + "-" + month + "-" + day;
+
+	const {first_name, last_name, email, amount, balance} = req.body
+	var total = balance - amount;	//add amount to users checking
 	
 	if(total < 0){
-		res.send("Not enough money to withdraw");
+		res.send("Error, not enough funds");	
 	}else{
-
 		pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [email, date, amount, total, first_name, last_name], (error, results) => {
 		    if (error) {
 		      throw error
 		    }
 		})
-		
+
 		//update balance of checking
 		pool.query('UPDATE bank_accounts SET status=$1 where email=$2 AND type="checking"', [total, email], (error, results) => {	
 		    if (error) {
 		      throw error
 		    }
 		})	
-		
 		count = count+1;
 	}
 });
+
+
+
 
 //deposit a check
 app.post('/api/depositCheque', (req, res) => 
