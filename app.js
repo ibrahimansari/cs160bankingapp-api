@@ -235,6 +235,30 @@ app.post('/api/depositOrWithdraw', (req, res) => {	//api for deposit or withdraw
 	}
 });
 
+//deposit a check
+app.post('/api/depositCheque', (req, res) => 
+{	
+	
+	var dateObj = new Date();
+	var month = dateObj.getUTCMonth() + 1; //months from 1-12
+	var day = dateObj.getUTCDate();
+	var year = dateObj.getUTCFullYear();
+
+	var date = year + "-" + month + "-" + day;
+
+	const {email, amount, balance, chequeImage} = req.body;
+	var total = balance + amount;
+	
+	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, email, date, amount, total, first_name, last_name], (error, results) => {
+	    if (error) 
+		{
+	      throw error
+	    }
+	});
+	
+	count = count+1;
+});
+
 app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 
 	const {email} = req.body
