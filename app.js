@@ -322,7 +322,7 @@ app.post('/api/depositCheque', (req, res) =>
 });
 
 
-app.post('/api/allBalance', (req, res) => {	//api for getting balance of a customers checkinga and savings account
+app.post('/api/allBalance', (req, res) => {	//api for getting balance of a customers checking and savings account
 
 	const {email} = req.body
 	
@@ -347,14 +347,13 @@ app.post('/api/allBalance', (req, res) => {	//api for getting balance of a custo
 });
 
 
-app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds from one account to another account (internal)
+app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds from one checking account to another account (internal)
 
-	const {emailFrom, emailTo, amount, balance} = req.body
+	const {emailFrom, emailTo, amount, balance} = req.body	//balance represents checking account of emailFrom
 	
 	if(amount > balance){
 		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
 	}
-	
 	
 	var found = false;				//boolean to check if emailTo user found
 	var fromFirstName = '';
@@ -374,6 +373,7 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 			fromLastName = users[i].last_name;
 		}
 	}
+	
 	if(found === false){				//if emailTo customer not found
 		res.send("Error, customer not found");
 	}
@@ -386,13 +386,10 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 
 	var date = year + "-" + month + "-" + day;
 
-	
 	var getBalance = 0;		//get the current balance from emailTo
 	var data = [];
-	
-	
-			
-	client.query('SELECT * from transaction where email=$1 order by email asc, date desc LIMIT 1', [emailTo], (err, res) => {
+		
+	client.query('SELECT * from bank_accounts where email=$1', [emailTo], (err, res) => {
 	  if (err) {
 	    console.log(err.stack);
 	  } else {
@@ -400,38 +397,37 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	  }
 	})
 	
-	getBalance = data[0].balance;
+	getBalance = data[0].balance;		//emailTo balance
 	
-	var total = 0;	//emailFrom balannce
+	var balanceEmailTo = getBalance+amount;	//emailFrom balannce
 
-	if(amount > 0){				//if amount passed in to be transferred is not negative
-		 total = balance - amount;	//emailFrom balannce
-	}else{
-		amount = amount*-1;		//if amount is negative, make it positive to store for customer receiving money
-		total = balance - amount;
-	}
 
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailTo, date, amount, getBalance, toFirstName, toLastName], (error, results) => {
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 	
-	//count = count+1;
-	
-	if(amount > 0){
-		amount = amount * -1;	//store for customer sending the money so needs to be negative
-	}
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
+
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, balance-amount, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 	
-	//count= count+1;
+	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [balance-amount, emailFrom], (error, results) => {	//update checking of emailFrom
+	    if (error) {
+	      throw error
+	    }
+	})	
 	
+	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [balanceEmailTo, emailTo], (error, results) => {	//update checking of emailTo
+	    if (error) {
+	      throw error
+	    }
+	})	
+		
 	res.send("Ok");
-	
 });
 
 
