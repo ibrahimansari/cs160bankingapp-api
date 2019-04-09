@@ -437,46 +437,34 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 
 app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds to external
 
-	const {emailFrom, amount, balance} = req.body
+	const {email, amount, balance} = req.body
 	
 	if(amount > balance){
 		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
 	}
 	
-	var fromFirstName = '';
-	var fromLastName = '';
-
-	for(var i = 0; i < users.length; i++){		//check if emailTo is a valid user
-		if(users[i].email === emailFrom){
-			fromFirstName = users[i].first_name;
-			fromLastName = users[i].last_name;
-		}
-	}
-
+	var total = balance - amount;			//frontend passing balance or db query?
+	
 	var dateObj = new Date();
 	var month = dateObj.getUTCMonth() + 1; //months from 1-12
 	var day = dateObj.getUTCDate();
 	var year = dateObj.getUTCFullYear();
 
 	var date = year + "-" + month + "-" + day;
-
-	var total = 0;
-	if(amount > 0){				//if amount passed in to be transferred is not negative
-		total = balance - amount;	//emailFrom balannce
-	}else{
-		amount = amount*-1;		//if amount is negative, make it positive to store for customer receiving money
-		total = balance - amount;
-	}
 	
-	if(amount > 0){
-		amount = amount * -1;	
-	}
 	
 	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
+
+	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total, email], (error, results) => {	//remove user from customer_info table in database
+	    if (error) {
+	      throw error
+	    }
+	})	
+	
 	
 	//count=count+1;
 	
