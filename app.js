@@ -453,7 +453,7 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	var date = year + "-" + month + "-" + day;
 	
 	
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [email, date, amount, total, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
@@ -474,7 +474,7 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 
 
 //need to add it to the transaction table?
-app.post('/api/transferSelf', (req, res) => {	//transfer from savings to checking and checking to savings
+app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to checking or checking to savings for self
 
 	const {email, accountFrom, accountTo, amount} = req.body
 	
@@ -556,14 +556,14 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 	
 	if(type === 'savings'){
 	
-		pool.query('UPDATE bank_accounts SET status="Open" where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
+		pool.query('UPDATE bank_accounts SET status="Open" where email=$1 AND type=$2', [email, type], (error, results) => {	//update status 
 		    if (error) {
 		      throw error
 		    }
 		})	
 	}else{
 	 
-	 	pool.query('UPDATE bank_accounts SET status="Open" where email=$1 AND type=$2', [email, type], (error, results) => {	//remove user from customer_info table in database
+	 	pool.query('UPDATE bank_accounts SET status="Open" where email=$1 AND type=$2', [email, type], (error, results) => {	
 		    if (error) {
 		      throw error
 		    }
