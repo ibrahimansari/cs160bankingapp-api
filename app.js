@@ -321,6 +321,7 @@ app.post('/api/depositCheque', (req, res) =>
 	//count = count+1;
 });
 
+
 app.post('/api/allBalance', (req, res) => {	//api for getting balance of a customers checkinga and savings account
 
 	const {email} = req.body
@@ -393,9 +394,9 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 			
 	client.query('SELECT * from transaction where email=$1 order by email asc, date desc LIMIT 1', [emailTo], (err, res) => {
 	  if (err) {
-	    console.log(err.stack)
+	    console.log(err.stack);
 	  } else {
-	    data.push(res.rows[0])
+	    data.push(res.rows[0]);
 	  }
 	})
 	
@@ -482,6 +483,68 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	res.send("Ok");
 	
 });
+
+
+//need to add it to the transaction table?
+app.post('/api/transferSelf', (req, res) => {	//transfer from savings to checking and checking to savings
+
+	const {email, accountFrom, accountTo, amount} = req.body
+	
+	//get accountFrom balance
+	//if accountFrom - amount < 0, output error
+
+	var dateObj = new Date();
+	var month = dateObj.getUTCMonth() + 1; //months from 1-12
+	var day = dateObj.getUTCDate();
+	var year = dateObj.getUTCFullYear();
+
+	var date = year + "-" + month + "-" + day;
+
+	var total = 0;
+	
+	var hold = [];
+	
+	pool.query('SELECT balance FROM bank_accounts where email =$1 AND type=$2) VALUES ($1)', [email, accountFrom], (error, results) => {
+	    if (error) {
+	      throw error
+	    }else{
+	      hold.push(results.rows);
+	    }
+	})
+	
+	pool.query('SELECT balance FROM bank_accounts where email =$1 AND type=$2) VALUES ($1)', [email, accountTo], (error, results) => {
+	    if (error) {
+	      throw error
+	    }else{
+	      hold.push(results.rows);
+	    }
+	})
+	
+	if(amount > hold[0]){ //accountFrom balance
+		res.send("Error, not enough funds");
+	}else{
+		
+		//first_name, last_name, email, account_number, status, balance, type
+		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [hold[0]-amount,email, accountFrom], (error, results) => {	
+		    if (error) {
+		      throw error
+		    }
+		})
+		
+		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [hold[0]+amount,email, accountTo], (error, results) => {	
+		    if (error) {
+		      throw error
+		    }
+		})
+		
+	}
+
+	res.send("Ok");
+});
+
+
+
+
 
 
 app.post('/api/closeAccount', (req, res) => {	//api for closing either a savings or checking bank account
