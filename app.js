@@ -14,7 +14,7 @@ const users = []			//holds user information from database and newly created user
 var savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 and is incremented each time an account of this type is opened
 var checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
 
-var count = 0;				//count for transactions table
+//var count = 0;				//count for transactions table
 
 
 var nodemailer = require('nodemailer');		//nodemailer for forgot my password
@@ -197,7 +197,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			      throw error
 			    }
 			  })
-			pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, user.email.toLowerCase(), date, 0, 0, user.first_name, user.last_name], (error, results) => {
+			pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.email.toLowerCase(), date, 0, 0, user.first_name, user.last_name], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
@@ -217,7 +217,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			
 			checkingAccountNumber = checkingAccountNumber+1;
 			savingsAccountNumber = savingsAccountNumber+1;
-			count = count+1;
+			//count = count+1;
 			
 			res.send('Ok');
 		}else{
@@ -242,7 +242,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	var total = balance + amount;	//add amount to users checking
 	
 
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [email, date, amount, total, first_name, last_name], (error, results) => {
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
@@ -254,7 +254,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	      throw error
 	    }
 	})	
-	count = count+1;
+	//count = count+1;
 });
 
 app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from checking
@@ -284,7 +284,7 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 		      throw error
 		    }
 		})	
-		count = count+1;
+		//count = count+1;
 	}
 });
 
@@ -305,24 +305,24 @@ app.post('/api/depositCheque', (req, res) =>
 	const {email, amount, balance, chequeImage} = req.body;
 	var total = balance + amount;
 	
-	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, email, date, amount, total, first_name, last_name], (error, results) => {
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) 
 		{
 	      throw error
 	    }
 	});
 	
-	count = count+1;
+	//count = count+1;
 });
 
-app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
+app.post('/api/allBalance', (req, res) => {	//api for getting balance of a customers checkinga and savings account
 
 	const {email} = req.body
 	
 	const hold = [];		//holds balance
 	
 	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT balance from transaction where email=$1 order by date desc LIMIT 1", [email]))
+	    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 order by date desc LIMIT 2", [email]))
 
 	    query.on('row', (row) => {	//push transaction of user from database to data structure
 		    hold.push(row);
@@ -331,7 +331,7 @@ app.post('/api/balance', (req, res) => {	//api for getting balance of a customer
 		console.log(res);
 	    })
 	   query.on("end", function (result) {
-		res.json({balanceUser: hold});
+		res.json({balanceUser: hold});	//should push two rows, checking and savings
 	    });
 
 	    done()
@@ -404,24 +404,24 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 		total = balance - amount;
 	}
 
-	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, emailTo, date, amount, getBalance, toFirstName, toLastName], (error, results) => {
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailTo, date, amount, getBalance, toFirstName, toLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 	
-	count = count+1;
+	//count = count+1;
 	
 	if(amount > 0){
 		amount = amount * -1;	//store for customer sending the money so needs to be negative
 	}
-	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 	
-	count= count+1;
+	//count= count+1;
 	
 	res.send("Ok");
 	
@@ -465,13 +465,13 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 		amount = amount * -1;	
 	}
 	
-	pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [count, emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, total, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 	
-	count=count+1;
+	//count=count+1;
 	
 	res.send("Ok");
 	
