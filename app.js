@@ -312,6 +312,12 @@ app.post('/api/depositCheque', (req, res) =>
 	    }
 	});
 	
+	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total,email], (error, results) => {	
+	    if (error) {
+	      throw error
+	    }
+	})
+	
 	//count = count+1;
 });
 
