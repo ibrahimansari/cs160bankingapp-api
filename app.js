@@ -254,6 +254,12 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	      throw error
 	    }
 	})	
+	
+	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
+	    if (error) {
+	      throw error
+	    }
+	})	
 	//count = count+1;
 });
 
@@ -280,6 +286,12 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 
 		//update balance of checking
 		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total, email], (error, results) => {	
+		    if (error) {
+		      throw error
+		    }
+		})	
+		
+		pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
 		    if (error) {
 		      throw error
 		    }
@@ -368,6 +380,18 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	      throw error
 	    }
 	})	
+	
+	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balance-amount, emailFrom], (error, results) => {	//remove user from customer_info table in database
+	    if (error) {
+	      throw error
+	    }
+	})	
+	
+	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balanceEmailTo, emailTo], (error, results) => {	//remove user from customer_info table in database
+	    if (error) {
+	      throw error
+	    }
+	})	
 		
 	res.send("Ok");
 });
@@ -403,6 +427,12 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	    }
 	})	
 	
+	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
+	    if (error) {
+	      throw error
+	    }
+	})	
+	
 	
 	//count=count+1;
 	
@@ -415,9 +445,6 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to checking or checking to savings for self
 
 	const {email, accountFrom, accountTo, amount} = req.body
-	
-	//get accountFrom balance
-	//if accountFrom - amount < 0, output error
 
 	var dateObj = new Date();
 	var month = dateObj.getUTCMonth() + 1; //months from 1-12
@@ -463,6 +490,30 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 		    }
 		})
 		
+		
+		//update balance on customer info
+		var balanceOfUser = [];
+		pool.connect(function(err, client, done) {
+		    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 LIMIT 2", [email]))
+
+		    query.on('row', (row) => {	//push transaction of user from database to data structure
+			    balanceOfUser.push(row);
+		    })
+		    query.on('error', (res) => {	//error
+			console.log(res);
+		    })
+		    done()
+		})
+		
+		
+		pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balanceOfUser[0].balance, email], (error, results) => {	
+		    if (error) {
+		      throw error
+		    }
+		})
+		
+		
+		
 	}
 
 	res.send("Ok");
@@ -480,7 +531,7 @@ app.post('/api/depositCheque', (req, res) =>
 
 	var date = year + "-" + month + "-" + day;
 
-	const {email, amount, balance} = req.body;
+	const {email, first_name, last_name, amount, balance} = req.body;
 	var total = balance + amount;
 	
 	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
@@ -491,6 +542,12 @@ app.post('/api/depositCheque', (req, res) =>
 	});
 	
 	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total,email], (error, results) => {	
+	    if (error) {
+	      throw error
+	    }
+	})
+	
+	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total,email], (error, results) => {	
 	    if (error) {
 	      throw error
 	    }
@@ -507,7 +564,7 @@ app.post('/api/allBalance', (req, res) => {	//api for getting balance of a custo
 	const hold = [];		//holds balance
 	
 	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 order by date desc LIMIT 2", [email]))
+	    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 LIMIT 2", [email]))
 
 	    query.on('row', (row) => {	//push transaction of user from database to data structure
 		    hold.push(row);
@@ -524,8 +581,28 @@ app.post('/api/allBalance', (req, res) => {	//api for getting balance of a custo
 	
 });
 
+app.post('/api/balanceAllUsers', (req, res) => {  //api for getting balance of all customers checking and savings account for bank manager
 
+	
+	const hold = [];		//holds balance
+	
+	pool.connect(function(err, client, done) {
+	    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1 order by date desc LIMIT 2", [email]))
 
+	    query.on('row', (row) => {	//push transaction of user from database to data structure
+		    hold.push(row);
+	    })
+	    query.on('error', (res) => {	//error
+		console.log(res);
+	    })
+	   query.on("end", function (result) {
+		res.json({balanceUser: hold});	//should push two rows, checking and savings for each user
+	    });
+
+	    done()
+	})
+	
+});
 
 
 
