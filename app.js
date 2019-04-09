@@ -289,64 +289,6 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 });
 
 
-
-
-//deposit a check
-app.post('/api/depositCheque', (req, res) => 
-{	
-	
-	var dateObj = new Date();
-	var month = dateObj.getUTCMonth() + 1; //months from 1-12
-	var day = dateObj.getUTCDate();
-	var year = dateObj.getUTCFullYear();
-
-	var date = year + "-" + month + "-" + day;
-
-	const {email, amount, balance, chequeImage} = req.body;
-	var total = balance + amount;
-	
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
-	    if (error) 
-		{
-	      throw error
-	    }
-	});
-	
-	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total,email], (error, results) => {	
-	    if (error) {
-	      throw error
-	    }
-	})
-	
-	//count = count+1;
-});
-
-
-app.post('/api/allBalance', (req, res) => {	//api for getting balance of a customers checking and savings account
-
-	const {email} = req.body
-	
-	const hold = [];		//holds balance
-	
-	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 order by date desc LIMIT 2", [email]))
-
-	    query.on('row', (row) => {	//push transaction of user from database to data structure
-		    hold.push(row);
-	    })
-	    query.on('error', (res) => {	//error
-		console.log(res);
-	    })
-	   query.on("end", function (result) {
-		res.json({balanceUser: hold});	//should push two rows, checking and savings
-	    });
-
-	    done()
-	})
-	
-});
-
-
 app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds from one checking account to another account (internal)
 
 	const {emailFrom, emailTo, amount, balance} = req.body	//balance represents checking account of emailFrom
@@ -524,6 +466,62 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 	}
 
 	res.send("Ok");
+});
+
+
+//deposit a check
+app.post('/api/depositCheque', (req, res) => 
+{	
+	
+	var dateObj = new Date();
+	var month = dateObj.getUTCMonth() + 1; //months from 1-12
+	var day = dateObj.getUTCDate();
+	var year = dateObj.getUTCFullYear();
+
+	var date = year + "-" + month + "-" + day;
+
+	const {email, amount, balance} = req.body;
+	var total = balance + amount;
+	
+	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
+	    if (error) 
+		{
+	      throw error
+	    }
+	});
+	
+	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total,email], (error, results) => {	
+	    if (error) {
+	      throw error
+	    }
+	})
+	
+	//count = count+1;
+});
+
+
+app.post('/api/allBalance', (req, res) => {	//api for getting balance of a customers checking and savings account
+
+	const {email} = req.body
+	
+	const hold = [];		//holds balance
+	
+	pool.connect(function(err, client, done) {
+	    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 order by date desc LIMIT 2", [email]))
+
+	    query.on('row', (row) => {	//push transaction of user from database to data structure
+		    hold.push(row);
+	    })
+	    query.on('error', (res) => {	//error
+		console.log(res);
+	    })
+	   query.on("end", function (result) {
+		res.json({balanceUser: hold});	//should push two rows, checking and savings
+	    });
+
+	    done()
+	})
+	
 });
 
 
