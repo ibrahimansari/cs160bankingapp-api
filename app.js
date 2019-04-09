@@ -249,7 +249,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	})
 
 	//update balance of checking
-	pool.query('UPDATE bank_accounts SET status=$1 where email=$2 AND type="checking"', [total, email], (error, results) => {	
+	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total, email], (error, results) => {	
 	    if (error) {
 	      throw error
 	    }
@@ -279,7 +279,7 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 		})
 
 		//update balance of checking
-		pool.query('UPDATE bank_accounts SET status=$1 where email=$2 AND type="checking"', [total, email], (error, results) => {	
+		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total, email], (error, results) => {	
 		    if (error) {
 		      throw error
 		    }
