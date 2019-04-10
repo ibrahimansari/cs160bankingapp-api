@@ -236,7 +236,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 
 	const {first_name, last_name, email, amount, balance} = req.body
 	var total = balance + amount;	//add amount to users checking
-	
+	console.log("depositing " + amount + " into " + first_name + " " + last_name + "'s account");
 
 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) {
