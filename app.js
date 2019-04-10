@@ -235,6 +235,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	var date = year + "-" + month + "-" + day;
 
 	const {first_name, last_name, email, amount, balance} = req.body
+	
 	var total = balance + amount;	//add amount to users checking
 	
 
@@ -251,12 +252,12 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	    }
 	})	
 	
-	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
+	//update customer info balance 
+	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})	
-	//count = count+1;
 });
 
 app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from checking
@@ -292,7 +293,6 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 		      throw error
 		    }
 		})	
-		//count = count+1;
 	}
 });
 
@@ -428,10 +428,7 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	      throw error
 	    }
 	})	
-	
-	
-	//count=count+1;
-	
+		
 	res.send("Ok");
 	
 });
@@ -480,7 +477,7 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 		    }
 		})
 		
-		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [hold[0]+amount,email, accountTo], (error, results) => {	
+		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [hold[1]+amount,email, accountTo], (error, results) => {	
 		    if (error) {
 		      throw error
 		    }
@@ -490,7 +487,7 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 		//update balance on customer info
 		var balanceOfUser = [];
 		pool.connect(function(err, client, done) {
-		    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 LIMIT 2", [email]))
+		    const query = client.query(new pg.Query('SELECT balance from bank_accounts where email=$1 AND type="checking"', [email]))
 
 		    query.on('row', (row) => {	//push transaction of user from database to data structure
 			    balanceOfUser.push(row);
@@ -500,7 +497,6 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 		    })
 		    done()
 		})
-		
 		
 		pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balanceOfUser[0].balance, email], (error, results) => {	
 		    if (error) {
