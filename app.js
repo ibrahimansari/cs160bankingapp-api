@@ -101,34 +101,33 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
 						 specificTransaction.push(row);
-						  console.log("hello");
 					    })
 					    query.on('error', (res) => {	//error
 						console.log(res);
 					    })
 					   query.on("end", function (result) {
-						res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
+						//res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
 					    });
 
 					    done()
 				})
 				
-// 				const accountArray = []		//holds user information from database and newly created users
-// 				pool.connect(function(err, client, done) {		//checking and savings balance and account numbers get
-// 					    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1", [user.email]))
+				const accountArray = []		//holds savings and checking account info for user
+				pool.connect(function(err, client, done) {		//checking and savings balance and account numbers get
+					    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1", [user.email]))
 
-// 					    query.on('row', (row) => {	//push transaction of user from database to data structure
-// 						    accountArray.push(row);
-// 					    })
-// 					    query.on('error', (res) => {	//error
-// 						console.log(res);
-// 					    })h
-// 					   query.on("end", function (result) {
-// 						//res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
-// 					    });
+					    query.on('row', (row) => {	//push transaction of user from database to data structure
+						    accountArray.push(row);
+					    })
+					    query.on('error', (res) => {	//error
+						console.log(res);
+					    })
+					   query.on("end", function (result) {
+						res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode, accountInfo: accountArray});
+					    });
 
-// 					    done()
-// 				})
+					    done()
+				})
 				
 				//res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
 
@@ -205,6 +204,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			  })
 			
 			//first_name, last_name, email, account_number, status, balance, type
+			//Initialize savings and checking accounts to closed and value of 0 
 			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, global.savingsAccountNumber, 'Closed', 0 ,'savings'], (error, results) => {
 			    if (error) {
 			      throw error
@@ -216,6 +216,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			    }
 			})
 			
+			//increment account numbers 
 			global.checkingAccountNumber = global.checkingAccountNumber+1;
 			global.savingsAccountNumber = global.savingsAccountNumber+1;
 			
