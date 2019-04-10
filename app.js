@@ -304,11 +304,11 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 		    }
 		})	
 		
-		pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
-		    if (error) {
-		      throw error
-		    }
-		})	
+// 		pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
+// 		    if (error) {
+// 		      throw error
+// 		    }
+// 		})	
 		
 		const specificTransaction = [];
 		pool.connect(function(err, client, done)
@@ -327,7 +327,6 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 
 			done()
 		})
-		//count = count+1;
 	}
 });
 
@@ -412,17 +411,17 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	    }
 	})	
 	
-	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balance-amount, emailFrom], (error, results) => {	//remove user from customer_info table in database
-	    if (error) {
-	      throw error
-	    }
-	})	
+// 	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balance-amount, emailFrom], (error, results) => {	//remove user from customer_info table in database
+// 	    if (error) {
+// 	      throw error
+// 	    }
+// 	})	
 	
-	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balanceEmailTo, emailTo], (error, results) => {	//remove user from customer_info table in database
-	    if (error) {
-	      throw error
-	    }
-	})	
+// 	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balanceEmailTo, emailTo], (error, results) => {	//remove user from customer_info table in database
+// 	    if (error) {
+// 	      throw error
+// 	    }
+// 	})	
 		
 	res.send("Ok");
 });
@@ -458,14 +457,13 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	    }
 	})	
 	
-	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
-	    if (error) {
-	      throw error
-	    }
-	})	
+// 	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
+// 	    if (error) {
+// 	      throw error
+// 	    }
+// 	})	
 	
 	
-	//count=count+1;
 	
 	res.send("Ok");
 	
@@ -537,11 +535,11 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 		})
 		
 		
-		pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balanceOfUser[0].balance, email], (error, results) => {	
-		    if (error) {
-		      throw error
-		    }
-		})
+// 		pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balanceOfUser[0].balance, email], (error, results) => {	
+// 		    if (error) {
+// 		      throw error
+// 		    }
+// 		})
 	}
 
 	res.send("Ok");
@@ -575,11 +573,11 @@ app.post('/api/depositCheque', (req, res) =>
 	    }
 	})
 	
-	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total,email], (error, results) => {	
-	    if (error) {
-	      throw error
-	    }
-	})
+// 	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total,email], (error, results) => {	
+// 	    if (error) {
+// 	      throw error
+// 	    }
+// 	})
 	
 	//count = count+1;
 });
