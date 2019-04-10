@@ -96,7 +96,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 			if(user.customer === 1){	//if a customer, get only this customer's transactions
 				pool.connect(function(err, client, done) {
-					    const query = client.query(new pg.Query("SELECT date, amount, balance from transaction where email=$1", [user.email]))
+					    const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
 						 specificTransaction.push(row);
@@ -135,7 +135,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			}else{		//if bank manager, then give list of all transactions of all customers
 				
 				pool.connect(function(err, client, done) {
-					    const query = client.query(new pg.Query("SELECT * from transaction"))
+					    const query = client.query(new pg.Query("SELECT * from transactions"))
 
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
@@ -197,11 +197,11 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			      throw error
 			    }
 			  })
-// 			pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0,user.email.toLowerCase(), dateHold, 0, 0, user.first_name, user.last_name], (error, results) => {
-// 			    if (error) {
-// 			      throw error
-// 			    }
-// 			  })
+			pool.query('INSERT INTO transactions (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [DEFAULT,user.email.toLowerCase(), dateHold, 0, 0, user.first_name, user.last_name], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+			  })
 			
 			//balance, first_name, last_name, email, account_number, status, type
 // 			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, savingsAccountNumber, 'Closed' ,'savings'], (error, results) => {
