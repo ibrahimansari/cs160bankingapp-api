@@ -208,11 +208,15 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, savingsAccountNumber, 'Closed', 0 ,'savings'], (error, results) => {
 			    if (error) {
 			      throw error
+			    }else{
+				  savingsAccountNumber = savingsAccountNumber+1;  
 			    }
 			})
 			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, checkingAccountNumber, 'Closed', 0 ,'checking'], (error, results) => {
 			    if (error) {
 			      throw error
+			    }else{
+				 checkingAccountNumber = checkingAccountNumber+1;   
 			    }
 			})
 			
