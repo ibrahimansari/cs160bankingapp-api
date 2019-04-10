@@ -256,23 +256,25 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	      throw error
 	    }
 	})
-	const specificTransaction = [];
-	pool.connect(function(err, client, done)
-	{
-		const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
+	
+	res.send("Ok");
+// 	const specificTransaction = [];
+// 	pool.connect(function(err, client, done)
+// 	{
+// 		const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
 
-		query.on('row', (row) => {	//push transaction of user from database to data structure
-			specificTransaction.push(row);
-		})
-		query.on('error', (res) => {	//error
-			console.log(res);
-		})
-		query.on("end", function (result) {
-			res.json({transactions : specificTransaction});
-		});
+// 		query.on('row', (row) => {	//push transaction of user from database to data structure
+// 			specificTransaction.push(row);
+// 		})
+// 		query.on('error', (res) => {	//error
+// 			console.log(res);
+// 		})
+// 		query.on("end", function (result) {
+// 			res.json({transactions : specificTransaction});
+// 		});
 
-		done()
-	})
+// 		done()
+// 	})
 	//count = count+1;
 });
 
