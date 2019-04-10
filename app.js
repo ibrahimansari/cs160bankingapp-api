@@ -112,24 +112,24 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 					    done()
 				})
 				
-				const accountArray = []		//holds user information from database and newly created users
-				pool.connect(function(err, client, done) {		//checking and savings balance and account numbers get
-					    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1", [user.email]))
+// 				const accountArray = []		//holds user information from database and newly created users
+// 				pool.connect(function(err, client, done) {		//checking and savings balance and account numbers get
+// 					    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1", [user.email]))
 
-					    query.on('row', (row) => {	//push transaction of user from database to data structure
-						    accountArray.push(row);
-					    })
-					    query.on('error', (res) => {	//error
-						console.log(res);
-					    })
-					   query.on("end", function (result) {
-						//res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
-					    });
+// 					    query.on('row', (row) => {	//push transaction of user from database to data structure
+// 						    accountArray.push(row);
+// 					    })
+// 					    query.on('error', (res) => {	//error
+// 						console.log(res);
+// 					    })
+// 					   query.on("end", function (result) {
+// 						//res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
+// 					    });
 
-					    done()
-				})
+// 					    done()
+// 				})
 				
-				res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode, accounts:accountArray});
+				res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
 
 			
 			}else{		//if bank manager, then give list of all transactions of all customers
