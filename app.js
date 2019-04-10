@@ -72,6 +72,7 @@ const{
 const IN_PROD = NODE_ENV === 'production'
 
 
+
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({
@@ -668,6 +669,9 @@ app.post('/api/resetPassword', (req, res) => {
 });
 
 
-app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
+// app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
+app.listen(process.env.PORT || 3000, function(){
+  console.log("Listening on port %d in %s mode", this.address().port, app.settings.env);
+});
 
 
