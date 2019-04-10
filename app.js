@@ -106,7 +106,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 						console.log(res);
 					    })
 					   query.on("end", function (result) {
-						//res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
+						res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
 					    });
 
 					    done()
@@ -174,7 +174,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 	var day = dateObj.getUTCDate();
 	var year = dateObj.getUTCFullYear();
 
-	var date = year + "-" + month + "-" + day;
+	var dateHold = year + "-" + month + "-" + day;
 
 	if( email && password){
 		const exists = users.some(user => user.email.toLowerCase() === email.toLowerCase())
@@ -197,23 +197,23 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			      throw error
 			    }
 			  })
-			pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0,user.email.toLowerCase(), date, 0, 0, user.first_name, user.last_name], (error, results) => {
+			pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0,user.email.toLowerCase(), dateHold, 0, 0, user.first_name, user.last_name], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
 			  })
 			
 			//balance, first_name, last_name, email, account_number, status, type
-			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, savingsAccountNumber, 'Closed' ,'savings'], (error, results) => {
-			    if (error) {
-			      throw error
-			    }
-			})
-			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, checkingAccountNumber, 'Closed' ,'checking'], (error, results) => {
-			    if (error) {
-			      throw error
-			    }
-			})
+// 			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, savingsAccountNumber, 'Closed' ,'savings'], (error, results) => {
+// 			    if (error) {
+// 			      throw error
+// 			    }
+// 			})
+// 			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, checkingAccountNumber, 'Closed' ,'checking'], (error, results) => {
+// 			    if (error) {
+// 			      throw error
+// 			    }
+// 			})
 			
 			checkingAccountNumber = checkingAccountNumber+1;
 			savingsAccountNumber = savingsAccountNumber+1;
