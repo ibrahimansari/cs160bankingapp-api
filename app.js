@@ -279,7 +279,7 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 	if(total < 0){
 		res.send("Error, not enough funds");	
 	}else{
-		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7)', [email, date, amount, total, first_name, last_name], (error, results) => {
+		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 		    if (error) {
 		      throw error
 		    }
@@ -357,7 +357,7 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	var balanceEmailTo = getBalance+amount;	//emailFrom balannce
 
 
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stampd, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
@@ -512,9 +512,6 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 		      throw error
 		    }
 		})
-		
-		
-		
 	}
 
 	res.send("Ok");
@@ -565,7 +562,7 @@ app.post('/api/allBalance', (req, res) => {	//api for getting balance of a custo
 	const hold = [];		//holds balance
 	
 	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 LIMIT 2", [email]))
+	    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1", [email]))
 
 	    query.on('row', (row) => {	//push transaction of user from database to data structure
 		    hold.push(row);
@@ -584,13 +581,10 @@ app.post('/api/allBalance', (req, res) => {	//api for getting balance of a custo
 
 app.post('/api/balanceAllUsers', (req, res) => {  //api for getting balance of all customers checking and savings account for bank manager
 
-	
 	const hold = [];		//holds balance
-	
-	const {email} = req.body;
-	
+		
 	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1", [email]))
+	    const query = client.query(new pg.Query("SELECT * from bank_accounts"))
 
 	    query.on('row', (row) => {	//push transaction of user from database to data structure
 		    hold.push(row);
