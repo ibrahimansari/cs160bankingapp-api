@@ -104,7 +104,6 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 						console.log(res);
 					    })
 					   query.on("end", function (result) {
-						//res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
 					    });
 
 					    done()
@@ -127,8 +126,6 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 					    done()
 				})
 				
-				//res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
-
 			
 			}else{		//if bank manager, then give list of all transactions of all customers
 				
