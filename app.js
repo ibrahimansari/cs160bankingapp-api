@@ -9,12 +9,10 @@ var pg = require("pg");			//postgres
 
 app.use(cors());
 
-const users = []			//holds user information from database and newly created users
+global.users = []			//holds user information from database and newly created users
 
 global.savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 and is incremented each time an account of this type is opened
 global.checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
-
-var count = 0;				//count for transactions table
 
 
 var nodemailer = require('nodemailer');		//nodemailer for forgot my password
@@ -87,7 +85,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 	const{email, password, customer} = req.body;
 
 	if(email && password){
-		const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
+		const user = global.users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
 		
 		const specificTransaction = []		//holds user information from database and newly created users
 
@@ -177,7 +175,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 	var dateHold = year + "-" + month + "-" + day;
 
 	if( email && password){
-		const exists = users.some(user => user.email.toLowerCase() === email.toLowerCase())
+		const exists = global.users.some(user => user.email.toLowerCase() === email.toLowerCase())
 	
 		if(!exists){			//if no user exists in db, create that user
 			const user = {
@@ -190,7 +188,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 				zipcode
 			}
 
-			users.push(user)
+			global.users.push(user)
 
 			pool.query('INSERT INTO customer_info (password, last_name, first_name, email, customer, address, zipcode) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.password, user.last_name, user.first_name, user.email.toLowerCase(), user.customer, user.address, user.zipcode], (error, results) => {
 			    if (error) {
@@ -316,16 +314,16 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	var toFirstName = '';
 	var toLastName = '';
 	
-	for(var i = 0; i < users.length; i++){		//check if emailTo is a valid user
-		if(users[i].email === emailTo && users[i].customer === 1){	//if valid emailTo customer found
+	for(var i = 0; i < global.users.length; i++){		//check if emailTo is a valid user
+		if(global.users[i].email === emailTo && global.users[i].customer === 1){	//if valid emailTo customer found
 			found = true;
-			toFirstName = users[i].first_name;
-			toLastName = users[i].last_name;
+			toFirstName = global.users[i].first_name;
+			toLastName = global.users[i].last_name;
 			//break;
 		}
-		if(users[i].email === emailFrom){
-			fromFirstName = users[i].first_name;
-			fromLastName = users[i].last_name;
+		if(global.users[i].email === emailFrom){
+			fromFirstName = global.users[i].first_name;
+			fromLastName = global.users[i].last_name;
 		}
 	}
 	
@@ -636,7 +634,7 @@ app.post('/api/resetPassword', (req, res) => {
 	
 	const {email} = req.body;
 	
-	const user = users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
+	const user = global.users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
 	
 	if(user){
 	
