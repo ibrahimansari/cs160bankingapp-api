@@ -277,7 +277,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 });
 
 app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from checking
-	
+	console.log('withdrawing');
 	var dateObj = new Date();
 	var month = dateObj.getUTCMonth() + 1; //months from 1-12
 	var day = dateObj.getUTCDate();
