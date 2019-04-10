@@ -315,7 +315,7 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 		const specificTransaction = [];
 		pool.connect(function(err, client, done)
 		{
-		const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
+		const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [email]))
 
 			query.on('row', (row) => {	//push transaction of user from database to data structure
 				specificTransaction.push(row);
