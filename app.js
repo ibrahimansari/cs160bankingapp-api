@@ -11,8 +11,8 @@ app.use(cors());
 
 const users = []			//holds user information from database and newly created users
 
-var savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 and is incremented each time an account of this type is opened
-var checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
+global.savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 and is incremented each time an account of this type is opened
+global.checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
 
 var count = 0;				//count for transactions table
 
@@ -205,23 +205,19 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			  })
 			
 			//first_name, last_name, email, account_number, status, balance, type
-			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, savingsAccountNumber, 'Closed', 0 ,'savings'], (error, results) => {
+			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, global.savingsAccountNumber, 'Closed', 0 ,'savings'], (error, results) => {
 			    if (error) {
 			      throw error
-			    }else{
-				  savingsAccountNumber = savingsAccountNumber+1;  
 			    }
 			})
-			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, checkingAccountNumber, 'Closed', 0 ,'checking'], (error, results) => {
+			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, global.checkingAccountNumber, 'Closed', 0 ,'checking'], (error, results) => {
 			    if (error) {
 			      throw error
-			    }else{
-				 checkingAccountNumber = checkingAccountNumber+1;   
 			    }
 			})
 			
-// 			checkingAccountNumber = checkingAccountNumber+1;
-// 			savingsAccountNumber = savingsAccountNumber+1;
+			global.checkingAccountNumber = global.checkingAccountNumber+1;
+			global.savingsAccountNumber = global.savingsAccountNumber+1;
 			
 			res.send('Ok');
 		}else{
