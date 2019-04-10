@@ -95,7 +95,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 			if(user.customer === 1){	//if a customer, get only this customer's transactions
 				pool.connect(function(err, client, done) {
-					    const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
+					    const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1 order by date_stamp DESC", [user.email]))
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
 						 specificTransaction.push(row);
