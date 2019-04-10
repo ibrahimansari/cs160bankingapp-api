@@ -114,7 +114,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 				
 				const accountArray = []		//holds user information from database and newly created users
 				pool.connect(function(err, client, done) {		//checking and savings balance and account numbers get
-					    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1 order by date desc", [user.email]))
+					    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1", [user.email]))
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
 						    accountArray.push(row);
@@ -135,7 +135,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			}else{		//if bank manager, then give list of all transactions of all customers
 				
 				pool.connect(function(err, client, done) {
-					    const query = client.query(new pg.Query("SELECT * from transaction order by email asc, date desc"))
+					    const query = client.query(new pg.Query("SELECT * from transaction order"))
 
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
