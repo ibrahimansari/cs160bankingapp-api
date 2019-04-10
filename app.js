@@ -203,21 +203,20 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			    }
 			  })
 			
-			//balance, first_name, last_name, email, account_number, status, type
-// 			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, savingsAccountNumber, 'Closed' ,'savings'], (error, results) => {
-// 			    if (error) {
-// 			      throw error
-// 			    }
-// 			})
-// 			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, checkingAccountNumber, 'Closed' ,'checking'], (error, results) => {
-// 			    if (error) {
-// 			      throw error
-// 			    }
-// 			})
+			//first_name, last_name, email, account_number, status, balance, type
+			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, savingsAccountNumber, 'Closed' ,'savings'], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+			})
+			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, checkingAccountNumber, 'Closed' ,'checking'], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+			})
 			
 // 			checkingAccountNumber = checkingAccountNumber+1;
 // 			savingsAccountNumber = savingsAccountNumber+1;
-// 			count = count+1;
 			
 			res.send('Ok');
 		}else{
