@@ -241,7 +241,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	var total = balance + amount;	//add amount to users checking
 	
 
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
@@ -277,7 +277,7 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 	if(total < 0){
 		res.send("Error, not enough funds");	
 	}else{
-		pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [email, date, amount, total, first_name, last_name], (error, results) => {
+		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7)', [email, date, amount, total, first_name, last_name], (error, results) => {
 		    if (error) {
 		      throw error
 		    }
@@ -355,14 +355,14 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	var balanceEmailTo = getBalance+amount;	//emailFrom balannce
 
 
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stampd, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 	
 
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, balance-amount, fromFirstName, fromLastName], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, balance-amount, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
@@ -414,7 +414,7 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	var date = year + "-" + month + "-" + day;
 	
 	
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [email, date, amount, total, fromFirstName, fromLastName], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, fromFirstName, fromLastName], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
@@ -456,7 +456,7 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 	
 	var hold = [];
 	
-	pool.query('SELECT balance FROM bank_accounts where email =$1 AND type=$2) VALUES ($1)', [email, accountFrom], (error, results) => {
+	pool.query('SELECT balance FROM bank_accounts where email =$1 AND type=$2)', [email, accountFrom], (error, results) => {
 	    if (error) {
 	      throw error
 	    }else{
@@ -464,7 +464,7 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 	    }
 	})
 	
-	pool.query('SELECT balance FROM bank_accounts where email =$1 AND type=$2) VALUES ($1)', [email, accountTo], (error, results) => {
+	pool.query('SELECT balance FROM bank_accounts where email =$1 AND type=$2)', [email, accountTo], (error, results) => {
 	    if (error) {
 	      throw error
 	    }else{
@@ -533,7 +533,7 @@ app.post('/api/depositCheque', (req, res) =>
 	const {email, first_name, last_name, amount, balance} = req.body;
 	var total = balance + amount;
 	
-	pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) 
 		{
 	      throw error
@@ -585,8 +585,10 @@ app.post('/api/balanceAllUsers', (req, res) => {  //api for getting balance of a
 	
 	const hold = [];		//holds balance
 	
+	const {email} = req.body;
+	
 	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1 order by date desc LIMIT 2", [email]))
+	    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1", [email]))
 
 	    query.on('row', (row) => {	//push transaction of user from database to data structure
 		    hold.push(row);
