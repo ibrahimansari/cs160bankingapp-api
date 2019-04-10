@@ -14,7 +14,7 @@ const users = []			//holds user information from database and newly created user
 var savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 and is incremented each time an account of this type is opened
 var checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
 
-//var count = 0;				//count for transactions table
+var count = 0;				//count for transactions table
 
 
 var nodemailer = require('nodemailer');		//nodemailer for forgot my password
@@ -197,7 +197,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			      throw error
 			    }
 			  })
-			pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [user.email.toLowerCase(), date, 0, 0, user.first_name, user.last_name], (error, results) => {
+			pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0,user.email.toLowerCase(), date, 0, 0, user.first_name, user.last_name], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
@@ -217,7 +217,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			
 			checkingAccountNumber = checkingAccountNumber+1;
 			savingsAccountNumber = savingsAccountNumber+1;
-			//count = count+1;
+			count = count+1;
 			
 			res.send('Ok');
 		}else{
