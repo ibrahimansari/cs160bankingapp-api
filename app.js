@@ -197,7 +197,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			      throw error
 			    }
 			  })
-			pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.email.toLowerCase(), date, 0, 0, user.first_name, user.last_name], (error, results) => {
+			pool.query('INSERT INTO transaction (email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6)', [user.email.toLowerCase(), date, 0, 0, user.first_name, user.last_name], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
