@@ -100,6 +100,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
 						 specificTransaction.push(row);
+						  console.log("hello");
 					    })
 					    query.on('error', (res) => {	//error
 						console.log(res);
