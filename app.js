@@ -129,7 +129,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 // 					    done()
 // 				})
 				
-				res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
+				//res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
 
 			
 			}else{		//if bank manager, then give list of all transactions of all customers
@@ -197,11 +197,11 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			      throw error
 			    }
 			  })
-			pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0,user.email.toLowerCase(), dateHold, 0, 0, user.first_name, user.last_name], (error, results) => {
-			    if (error) {
-			      throw error
-			    }
-			  })
+// 			pool.query('INSERT INTO transaction (count, email, date, amount, balance, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0,user.email.toLowerCase(), dateHold, 0, 0, user.first_name, user.last_name], (error, results) => {
+// 			    if (error) {
+// 			      throw error
+// 			    }
+// 			  })
 			
 			//balance, first_name, last_name, email, account_number, status, type
 // 			pool.query('INSERT INTO bank_accounts (balance, first_name, last_name, email, account_number, status, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [0, user.first_name, user.last_name, user.email, savingsAccountNumber, 'Closed' ,'savings'], (error, results) => {
@@ -215,9 +215,9 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 // 			    }
 // 			})
 			
-			checkingAccountNumber = checkingAccountNumber+1;
-			savingsAccountNumber = savingsAccountNumber+1;
-			count = count+1;
+// 			checkingAccountNumber = checkingAccountNumber+1;
+// 			savingsAccountNumber = savingsAccountNumber+1;
+// 			count = count+1;
 			
 			res.send('Ok');
 		}else{
