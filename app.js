@@ -239,46 +239,31 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	console.log('depositing');
 	
 	var statusHold= [];
-	pool.connect(function(err, client, done)
-	{
-		const query = client.query(new pg.Query("SELECT status from bank_accounts where email=$1 AND type='checking'", [email]))
-
-		query.on('row', (row) => {	//push transaction of user from database to data structure
-			statusHold.push(row);
-		})
-		query.on('error', (res) => {	//error
-			console.log(res);
-		})
-		query.on("end", function (result) {
-			if(statusHold[0].status === 'Closed'){
-				res.send("Error, checking is closed");
-			}
-			
-		});
-
-		done()
+	
+	pool.query("SELECT status FROM bank_accounts where email =$1 AND type='checking')", [email], (error, results) => {
+	    if (error) {
+	      throw error
+	    }else{
+	      statusHold.push(results.rows);
+	    }
 	})
 	
+	if(statusHold[0].status === 'Closed'){
+		res.send("error");
+	}else{
+		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
+		    if (error) {
+		      throw error
+		    }
+		})
 
-
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
-	    if (error) {
-	      throw error
-	    }
-	})
-
-	//update balance of checking
-	pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [total, email], (error, results) => {	
-	    if (error) {
-	      throw error
-	    }
-	})	
-	
-	/*pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
-	    if (error) {
-	      throw error
-	    }
-	})*/
+		//update balance of checking
+		pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [total, email], (error, results) => {	
+		    if (error) {
+		      throw error
+		    }
+		})	
+	}
 	
 	res.send("Ok");
 // 	const specificTransaction = [];
@@ -298,7 +283,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 
 // 		done()
 // 	})
-	//count = count+1;
+
 });
 
 app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from checking
