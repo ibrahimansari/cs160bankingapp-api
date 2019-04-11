@@ -95,7 +95,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 
 			if(user.customer === 1){	//if a customer, get only this customer's transactions
 				pool.connect(function(err, client, done) {
-					    const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1 order by transaction_id DESC", [user.email]))
+					    const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
 						 specificTransaction.push(row);
@@ -251,11 +251,11 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	    }
 	})	
 	
-	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
+	/*pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
 	    if (error) {
 	      throw error
 	    }
-	})
+	})*/
 	
 	res.send("Ok");
 // 	const specificTransaction = [];
