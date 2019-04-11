@@ -250,14 +250,16 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 			console.log(res);
 		})
 		query.on("end", function (result) {
+			if(statusHold[0].status === 'Closed'){
+				res.send("Error, checking is closed");
+			}
+			
 		});
 
 		done()
 	})
 	
-	if(statusHold[0].status === 'Closed'){
-		res.send("Error, checking is closed");
-	}
+
 
 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) {
@@ -310,6 +312,28 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 
 	const {first_name, last_name, email, amount, balance} = req.body
 	var total = balance - amount;	//add amount to users checking
+	
+	
+// 	var statusHold= [];
+// 	pool.connect(function(err, client, done)
+// 	{
+// 		const query = client.query(new pg.Query('SELECT status from bank_accounts where email=$1 AND type="checking"', [email]))
+
+// 		query.on('row', (row) => {	//push transaction of user from database to data structure
+// 			statusHold.push(row);
+// 		})
+// 		query.on('error', (res) => {	//error
+// 			console.log(res);
+// 		})
+// 		query.on("end", function (result) {
+// 		});
+
+// 		done()
+// 	})
+	
+// 	if(statusHold[0].status === 'Closed'){
+// 		res.send("Error, checking is closed");
+// 	}
 	
 	if(total < 0){
 		res.send("Error, not enough funds");	
