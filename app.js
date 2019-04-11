@@ -240,17 +240,17 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	
 	var statusHold= [];
 	
-	pool.query("SELECT status FROM bank_accounts where email =$1 AND type='checking')", [email], (error, results) => {
-	    if (error) {
-	      throw error
-	    }else{
-	      statusHold.push(results.rows);
-	    }
-	})
+// 	pool.query("SELECT status FROM bank_accounts where email =$1 AND type='checking')", [email], (error, results) => {
+// 	    if (error) {
+// 	      throw error
+// 	    }else{
+// 	      statusHold.push(results.rows);
+// 	    }
+// 	})
 	
-	if(statusHold[0].status === 'Closed'){
-		res.send("error");
-	}else{
+// 	if(statusHold[0].status === 'Closed'){
+// 		res.send("error");
+// 	}else{
 		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 		    if (error) {
 		      throw error
@@ -263,7 +263,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 		      throw error
 		    }
 		})	
-	}
+// 	}
 	
 	res.send("Ok");
 // 	const specificTransaction = [];
