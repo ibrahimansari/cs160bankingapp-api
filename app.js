@@ -237,6 +237,27 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	const {first_name, last_name, email, amount, balance} = req.body
 	var total = balance + amount;	//add amount to users checking
 	console.log('depositing');
+	
+	var statusHold= [];
+	pool.connect(function(err, client, done)
+	{
+		const query = client.query(new pg.Query('SELECT status from bank_accounts where email=$1 AND type="checking"', [email]))
+
+		query.on('row', (row) => {	//push transaction of user from database to data structure
+			statusHold.push(row);
+		})
+		query.on('error', (res) => {	//error
+			console.log(res);
+		})
+		query.on("end", function (result) {
+		});
+
+		done()
+	})
+	
+	if(statusHold[0].status === 'Closed'){
+		res.send("Error, checking is closed");
+	}
 
 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) {
