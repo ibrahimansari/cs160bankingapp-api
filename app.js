@@ -241,7 +241,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	var statusHold= [];
 	pool.connect(function(err, client, done)
 	{
-		const query = client.query(new pg.Query('SELECT status from bank_accounts where email=$1 AND type="checking"', [email]))
+		const query = client.query(new pg.Query("SELECT status from bank_accounts where email=$1 AND type='checking'", [email]))
 
 		query.on('row', (row) => {	//push transaction of user from database to data structure
 			statusHold.push(row);
