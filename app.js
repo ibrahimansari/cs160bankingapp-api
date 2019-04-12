@@ -417,7 +417,7 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 //need to add it to the transaction table?
 app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to checking or checking to savings for self
 
-	const {email, accountFrom, accountTo, amount} = req.body
+	const {email, accountFrom, accountTo, amount, toBalance, fromBalance} = req.body
 
 	var dateObj = new Date();
 	var month = dateObj.getUTCMonth() + 1; //months from 1-12
@@ -428,65 +428,43 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 
 	var total = 0;
 	
-	var hold = [];
-	
-	pool.query('SELECT balance FROM bank_accounts where email =$1 AND type=$2)', [email, accountFrom], (error, results) => {
-	    if (error) {
-	      throw error
-	    }else{
-	      hold.push(results.rows);
-	    }
-	})
-	
-	pool.query('SELECT balance FROM bank_accounts where email =$1 AND type=$2)', [email, accountTo], (error, results) => {
-	    if (error) {
-	      throw error
-	    }else{
-	      hold.push(results.rows);
-	    }
-	})
-	
-	if(amount > hold[0]){ //accountFrom balance
+	var from = '';
+        var to = '';
+        var balanceFrom = 0;
+        var balanceTo = 0;
+        
+        if(accountFrom === 'checking'){
+            from = 'checking';
+            to = 'savings';
+            balanceFrom = this.props.context.checkingBalance;
+            balanceTo = this.props.context.savingsBalance;
+        }else{
+            to = 'checking';
+            from = 'savings';  
+            balanceFrom = this.props.context.checkingBalance;
+            balanceTo = this.props.context.savingsBalance;
+        }
+
+	if(amount > fromBalance){ //accountFrom balance
 		res.send("Error, not enough funds");
 	}else{
 		
 		//first_name, last_name, email, account_number, status, balance, type
-		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [hold[0]-amount,email, accountFrom], (error, results) => {	
+		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [balanceFrom-amount,email, from], (error, results) => {	
 		    if (error) {
 		      throw error
 		    }
 		})
 		
-		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [hold[0]+amount,email, accountTo], (error, results) => {	
+		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [balanceTo+amount,email, to], (error, results) => {	
 		    if (error) {
 		      throw error
 		    }
 		})
 		
-		
-		//update balance on customer info
-		var balanceOfUser = [];
-		pool.connect(function(err, client, done) {
-		    const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 LIMIT 2", [email]))
-
-		    query.on('row', (row) => {	//push transaction of user from database to data structure
-			    balanceOfUser.push(row);
-		    })
-		    query.on('error', (res) => {	//error
-			console.log(res);
-		    })
-		    done()
-		})
-		
-		
-// 		pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balanceOfUser[0].balance, email], (error, results) => {	
-// 		    if (error) {
-// 		      throw error
-// 		    }
-// 		})
+		res.send("Ok");
 	}
 
-	res.send("Ok");
 });
 
 
