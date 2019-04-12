@@ -300,27 +300,7 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 	const {first_name, last_name, email, amount, balance} = req.body
 	var total = balance - amount;	//add amount to users checking
 	
-	
-// 	var statusHold= [];
-// 	pool.connect(function(err, client, done)
-// 	{
-// 		const query = client.query(new pg.Query('SELECT status from bank_accounts where email=$1 AND type="checking"', [email]))
 
-// 		query.on('row', (row) => {	//push transaction of user from database to data structure
-// 			statusHold.push(row);
-// 		})
-// 		query.on('error', (res) => {	//error
-// 			console.log(res);
-// 		})
-// 		query.on("end", function (result) {
-// 		});
-
-// 		done()
-// 	})
-	
-// 	if(statusHold[0].status === 'Closed'){
-// 		res.send("Error, checking is closed");
-// 	}
 	
 	if(total < 0){
 		res.send("Error, not enough funds");	
@@ -337,30 +317,6 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 		      throw error
 		    }
 		})	
-		
-// 		pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
-// 		    if (error) {
-// 		      throw error
-// 		    }
-// 		})	
-		
-// 		const specificTransaction = [];
-// 		pool.connect(function(err, client, done)
-// 		{
-// 		const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [email]))
-
-// 			query.on('row', (row) => {	//push transaction of user from database to data structure
-// 				specificTransaction.push(row);
-// 			})
-// 			query.on('error', (res) => {	//error
-// 				console.log(res);
-// 			})
-// 			query.on("end", function (result) {
-// 				res.json({transactions : specificTransaction});
-// 			});
-
-// 			done()
-// 		})
 		res.send("Ok");
 	}
 });
@@ -410,7 +366,6 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	
 	res.send("ok");
 
-
 });
 
 
@@ -432,7 +387,7 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	var date = year + "-" + month + "-" + day;
 	
 	
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, total, first_name, last_name], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount*-1, total, first_name, last_name], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
