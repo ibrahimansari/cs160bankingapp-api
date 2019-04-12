@@ -129,19 +129,21 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			
 			}else{		//if bank manager, then give list of all transactions of all customers
 				
+				var s = []
 				pool.connect(function(err, client, done) {
 					    const query = client.query(new pg.Query("SELECT * from transactions"))
 
 
 					    query.on('row', (row) => {	//push transaction of user from database to data structure
-						    specificTransaction.push(row);
+						    s.push(row);
 					    })
 					    query.on('error', (res) => {	//error
 						console.log(res);
 					    })
 					   query.on("end", function (result) {
-						res.json({value:val, transactions:specificTransaction, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
-					    });
+						res.json({value:val, transactions:s, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
+					   	console.log(s); 
+					   });
 
 					    done()
 				})
