@@ -426,47 +426,67 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 			console.log(res);
 		})
 		query.on("end", function (result) {
+			pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+			})
+
+
+			pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, balance-amount, fromFirstName, fromLastName], (error, results) => {
+			    if (error) {
+			      throw error
+			    }
+			})
+
+			pool.query("UPDATE bank_accounts SET balance=balance-$1 where email=$2 AND type='checking'", [amount, emailFrom], (error, results) => {	//update checking of emailFrom
+			    if (error) {
+			      throw error
+			    }
+			})	
+
+			pool.query("UPDATE bank_accounts SET balance=balance+$1 where email=$2 AND type='checking'", [amount, emailTo], (error, results) => {	//update checking of emailTo
+			    if (error) {
+			      throw error
+			    }
+			})	
+			
+			
+			pool.end();
+			
 		});
 		done()
 	})
 	
-	if(data[0].balance >= 0){
-		
-	
-		getBalance = data[0].balance;		//emailTo balance
-
-		var balanceEmailTo = getBalance+amount;	//emailFrom balannce
 
 
-		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
-		    if (error) {
-		      throw error
-		    }
-		})
+// 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
+// 	    if (error) {
+// 	      throw error
+// 	    }
+// 	})
 
 
-		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, balance-amount, fromFirstName, fromLastName], (error, results) => {
-		    if (error) {
-		      throw error
-		    }
-		})
+// 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, balance-amount, fromFirstName, fromLastName], (error, results) => {
+// 	    if (error) {
+// 	      throw error
+// 	    }
+// 	})
 
-		pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [balance-amount, emailFrom], (error, results) => {	//update checking of emailFrom
-		    if (error) {
-		      throw error
-		    }
-		})	
+// 	pool.query("UPDATE bank_accounts SET balance=balance-$1 where email=$2 AND type='checking'", [amount, emailFrom], (error, results) => {	//update checking of emailFrom
+// 	    if (error) {
+// 	      throw error
+// 	    }
+// 	})	
 
-		pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [balanceEmailTo, emailTo], (error, results) => {	//update checking of emailTo
-		    if (error) {
-		      throw error
-		    }
-		})	
-		
-		res.send("Ok");
-	}else{
-		res.send("Error");	
-	}
+// 	pool.query("UPDATE bank_accounts SET balance=balance+$1 where email=$2 AND type='checking'", [amount, emailTo], (error, results) => {	//update checking of emailTo
+// 	    if (error) {
+// 	      throw error
+// 	    }
+// 	})	
+
+	res.send("Ok");
+
 });
 
 
