@@ -494,7 +494,7 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 
 app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds to external
 
-	const {first_name, last_name, email, amount, balance} = req.body
+	const {first_name, last_name, emailFrom, amount, balance} = req.body
 	
 	if(amount > balance){
 		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
