@@ -325,7 +325,7 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 	if(total < 0){
 		res.send("Error, not enough funds");	
 	}else{
-		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
+		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount*-1, total, first_name, last_name], (error, results) => {
 		    if (error) {
 		      throw error
 		    }
@@ -432,13 +432,13 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	var date = year + "-" + month + "-" + day;
 	
 	
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 
-	pool.query("UPDATE bank_accounts SET balance=balance-$1 where email=$2 AND type='checking'", [amount, email], (error, results) => {	//remove user from customer_info table in database
+	pool.query("UPDATE bank_accounts SET balance=balance-$1 where email=$2 AND type='checking'", [amount, emailFrom], (error, results) => {	//remove user from customer_info table in database
 	    if (error) {
 	      throw error
 	    }
