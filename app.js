@@ -516,11 +516,13 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	    }
 	})
 
-	pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [total, email], (error, results) => {	//remove user from customer_info table in database
+	pool.query("UPDATE bank_accounts SET balance=balance-$1 where email=$2 AND type='checking'", [amount, email], (error, results) => {	//remove user from customer_info table in database
 	    if (error) {
 	      throw error
 	    }
 	})	
+	
+	console.log("transferring externally");
 	
 // 	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
 // 	    if (error) {
