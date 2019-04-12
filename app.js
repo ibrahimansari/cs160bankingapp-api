@@ -441,7 +441,7 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 // 			})
 
 
-			pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, -1*(balance-amount), first_name, last_name], (error, results) => {
+			pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount*-1, balance-amount, first_name, last_name], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
