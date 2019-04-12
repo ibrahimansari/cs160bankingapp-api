@@ -366,34 +366,35 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 
 app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds from one checking account to another account (internal)
 
-	const {emailFrom, emailTo, amount, balance} = req.body	//balance represents checking account of emailFrom
+	const {first_name, last_name, emailFrom, emailTo, amount, balance} = req.body	//balance represents checking account of emailFrom
 	
 	if(amount > balance){
 		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
 	}
 	
 	var found = false;				//boolean to check if emailTo user found
-	var fromFirstName = '';
-	var fromLastName = '';
 	var toFirstName = '';
 	var toLastName = '';
 	
-	for(var i = 0; i < global.users.length; i++){		//check if emailTo is a valid user
-		if(global.users[i].email === emailTo && global.users[i].customer === 1){	//if valid emailTo customer found
-			found = true;
-			toFirstName = global.users[i].first_name;
-			toLastName = global.users[i].last_name;
-			//break;
-		}
-		if(global.users[i].email === emailFrom){
-			fromFirstName = global.users[i].first_name;
-			fromLastName = global.users[i].last_name;
-		}
-	}
+// 	for(var i = 0; i < global.users.length; i++){		//check if emailTo is a valid user
+// 		if(global.users[i].email === emailTo && global.users[i].customer === 1){	//if valid emailTo customer found
+// 			found = true;
+// 			toFirstName = global.users[i].first_name;
+// 			toLastName = global.users[i].last_name;
+// 			break;
+// 		}
+// 	}
 	
-	if(found === false){				//if emailTo customer not found
+	const exists = global.users.some(user => user.email.toLowerCase() === emailTo.toLowerCase());
+	
+	if(!exists){
 		res.send("Error, customer not found");
 	}
+
+	
+// 	if(found === false){				//if emailTo customer not found
+// 		res.send("Error, customer not found");
+// 	}
 
 
 	var dateObj = new Date();
@@ -406,57 +407,66 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	var getBalance = 0;		//get the current balance from emailTo
 	var data = [];
 		
-	client.query('SELECT * from bank_accounts where email=$1', [emailTo], (err, res) => {
-	  if (err) {
-	    console.log(err.stack);
-	  } else {
-	    data.push(res.rows[0]);
-	  }
+// 	client.query('SELECT * from bank_accounts where email=$1', [emailTo], (err, res) => {
+// 	  if (err) {
+// 	    console.log(err.stack);
+// 	  } else {
+// 	    data.push(res.rows[0]);
+// 	  }
+// 	})
+	
+	pool.connect(function(err, client, done)
+	{
+		const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 AND type='checking'", [emailTo]))
+
+		query.on('row', (row) => {	//push transaction of user from database to data structure
+			data.push(row);
+		})
+		query.on('error', (res) => {	//error
+			console.log(res);
+		})
+		query.on("end", function (result) {
+		});
+		done()
 	})
 	
-	getBalance = data[0].balance;		//emailTo balance
-	
-	var balanceEmailTo = getBalance+amount;	//emailFrom balannce
-
-
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
-	    if (error) {
-	      throw error
-	    }
-	})
-	
-
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, balance-amount, fromFirstName, fromLastName], (error, results) => {
-	    if (error) {
-	      throw error
-	    }
-	})
-	
-	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [balance-amount, emailFrom], (error, results) => {	//update checking of emailFrom
-	    if (error) {
-	      throw error
-	    }
-	})	
-	
-	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [balanceEmailTo, emailTo], (error, results) => {	//update checking of emailTo
-	    if (error) {
-	      throw error
-	    }
-	})	
-	
-// 	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balance-amount, emailFrom], (error, results) => {	//remove user from customer_info table in database
-// 	    if (error) {
-// 	      throw error
-// 	    }
-// 	})	
-	
-// 	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [balanceEmailTo, emailTo], (error, results) => {	//remove user from customer_info table in database
-// 	    if (error) {
-// 	      throw error
-// 	    }
-// 	})	
+	if(data[0].balance >= 0){
 		
-	res.send("Ok");
+	
+		getBalance = data[0].balance;		//emailTo balance
+
+		var balanceEmailTo = getBalance+amount;	//emailFrom balannce
+
+
+		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
+		    if (error) {
+		      throw error
+		    }
+		})
+
+
+		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, balance-amount, fromFirstName, fromLastName], (error, results) => {
+		    if (error) {
+		      throw error
+		    }
+		})
+
+		pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [balance-amount, emailFrom], (error, results) => {	//update checking of emailFrom
+		    if (error) {
+		      throw error
+		    }
+		})	
+
+		pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [balanceEmailTo, emailTo], (error, results) => {	//update checking of emailTo
+		    if (error) {
+		      throw error
+		    }
+		})	
+		
+		res.send("Ok");
+	}else{
+		res.send("Error");	
+	}
 });
 
 
