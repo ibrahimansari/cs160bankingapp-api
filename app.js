@@ -368,7 +368,7 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 
 app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds from one checking account to another account (internal)
 
-	const {first_name, last_name, emailFrom, emailTo, amount, balance} = req.body	//balance represents checking account of emailFrom
+	const {first_name, last_name, emailFrom, emailTo, amount, balance, toBalance} = req.body	//balance represents checking account of emailFrom
 	
 	if(amount > balance){
 		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
@@ -640,6 +640,30 @@ app.post('/api/depositCheque', (req, res) =>
 // 	})
 	
 	//count = count+1;
+});
+
+
+app.post('/api/getToBalance', (req, res) => {	//api for getting balance of a customers checking and savings account
+
+	const {email} = req.body
+	
+	const hold = [];		//holds balance
+	
+	pool.connect(function(err, client, done) {
+	    const query = client.query(new pg.Query("SELECT balance,status from bank_accounts where email=$1 AND type='checking'", [email]))
+
+	    query.on('row', (row) => {	//push transaction of user from database to data structure
+		    hold.push(row);
+	    })
+	    query.on('error', (res) => {	//error
+		console.log(res);
+	    })
+	   query.on("end", function (result) {
+		res.json({array: hold});	//should push two rows, checking and savings
+	    });
+
+	    done()
+	})
 });
 
 
