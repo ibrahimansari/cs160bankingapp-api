@@ -94,20 +94,20 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
 
 			if(user.customer === 1){	//if a customer, get only this customer's transactions
-				pool.connect(function(err, client, done) {
-					    const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
+// 				pool.connect(function(err, client, done) {
+// 					    const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
 
-					    query.on('row', (row) => {	//push transaction of user from database to data structure
-						 specificTransaction.push(row);
-					    })
-					    query.on('error', (res) => {	//error
-						console.log(res);
-					    })
-					   query.on("end", function (result) {
-					    });
+// 					    query.on('row', (row) => {	//push transaction of user from database to data structure
+// 						 specificTransaction.push(row);
+// 					    })
+// 					    query.on('error', (res) => {	//error
+// 						console.log(res);
+// 					    })
+// 					   query.on("end", function (result) {
+// 					    });
 
-					    done()
-				})
+// 					    done()
+// 				})
 				
 				const accountArray = []		//holds savings and checking account info for user
 				pool.connect(function(err, client, done) {		//checking and savings balance and account numbers get
@@ -142,7 +142,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 					    })
 					   query.on("end", function (result) {
 						res.json({value:val, transactions:s, first_name: user.first_name, last_name: user.last_name, email: user.email, address: user.address, zipcode: user.zipcode});
-					   	console.log(s); 
+						   console.log(s); 
 					   });
 
 					    done()
