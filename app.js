@@ -518,27 +518,29 @@ app.post('/api/getToBalance', (req, res) => {	//api for getting balance of a cus
 	
 	const hold = [];		//holds balance
 	
-	console.log("hello 3");
+	console.log("getToBalance API called");
 	
+	var s = []
 	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1 AND type='checking'", [email]))
+		    const query = client.query(new pg.Query("SELECT * from bank_accounts"))
 
-	    query.on('row', (row) => {	//push transaction of user from database to data structure
-		    hold.push(row);
-		    console.log("hello");
-		    console.log(row);
-	    })
-	    query.on('error', (res) => {	//error
-		console.log(res);
-	    })
-	   query.on("end", function (result) {
-		   console.log("hello 3h3");
-		   console.log(hold);
-		res.json({array: hold});	//should push two rows, checking and savings
-	    });
 
-	    done()
+		    query.on('row', (row) => {	//push transaction of user from database to data structure
+			    s.push(row);
+		    })
+		    query.on('error', (res) => {	//error
+			console.log(res);
+		    })
+		   query.on("end", function (result) {
+			   console.log(s);
+			   console.log("called");
+			res.json({holdArray:s});
+			console.log(s); 
+		   });
+
+		    done()
 	})
+
 });
 
 app.post('/api/getToName', (req, res) => {	//api for getting balance of a customers checking and savings account
