@@ -532,6 +532,8 @@ app.post('/api/getToBalance', (req, res) => {	//api for getting balance of a cus
 		console.log(res);
 	    })
 	   query.on("end", function (result) {
+		   console.log("hello 3h3");
+		   console.log(hold);
 		res.json({array: hold});	//should push two rows, checking and savings
 	    });
 
