@@ -436,14 +436,19 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
         if(accountFrom === 'checking'){
             from = 'checking';
             to = 'savings';
-            balanceFrom = this.props.context.checkingBalance;
-            balanceTo = this.props.context.savingsBalance;
+            balanceFrom = fromBalance;
+            balanceTo = toBalance;
         }else{
             to = 'checking';
             from = 'savings';  
-            balanceFrom = this.props.context.checkingBalance;
-            balanceTo = this.props.context.savingsBalance;
+            balanceFrom = fromBalance;
+            balanceTo = toBalance;
         }
+	
+	console.log("to: ");
+	console.log(to);
+	console.log("from : ");
+	console.log(from);
 
 	if(amount > fromBalance){ //accountFrom balance
 		res.send("Error, not enough funds");
@@ -461,6 +466,8 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 		      throw error
 		    }
 		})
+		
+		console.log("transferred self");
 		
 		res.send("Ok");
 	}
