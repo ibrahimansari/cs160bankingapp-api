@@ -523,6 +523,8 @@ app.post('/api/getToBalance', (req, res) => {	//api for getting balance of a cus
 
 	    query.on('row', (row) => {	//push transaction of user from database to data structure
 		    hold.push(row);
+		    console.log("hello");
+		    console.log(row);
 	    })
 	    query.on('error', (res) => {	//error
 		console.log(res);
@@ -545,7 +547,9 @@ app.post('/api/getToName', (req, res) => {	//api for getting balance of a custom
 	    const query = client.query(new pg.Query("SELECT first_name, last_name from customer_info where email=$1", [email]))
 
 	    query.on('row', (row) => {	//push transaction of user from database to data structure
-		    hold.push(row);
+		    hold.push(row);		    
+		    console.log("name 2");
+		    console.log(row);
 	    })
 	    query.on('error', (res) => {	//error
 		console.log(res);
