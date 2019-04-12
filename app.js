@@ -417,22 +417,28 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 // 	  }
 // 	})
 	
-	pool.connect(function(err, client, done)
-	{
-		const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 AND type='checking'", [emailTo]))
+// 	pool.connect(function(err, client, done)
+// 	{
+// 		const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 AND type='checking'", [emailTo]))
 
-		query.on('row', (row) => {	//push transaction of user from database to data structure
-			data.push(row);
-		})
-		query.on('error', (res) => {	//error
-			console.log(res);
-		})
-		query.on("end", function (result) {
-			pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, data[0].balance+amount, toFirstName, toLastName], (error, results) => {
-			    if (error) {
-			      throw error
-			    }
-			})
+// 		query.on('row', (row) => {	//push transaction of user from database to data structure
+// 			data.push(row);
+// 		})
+// 		query.on('error', (res) => {	//error
+// 			console.log(res);
+// 		})
+// 		query.on("end", function (result) {
+// 			pool.end();
+			
+// 		});
+// 		done()
+// 	})
+	
+// 			pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, data[0].balance+amount, toFirstName, toLastName], (error, results) => {
+// 			    if (error) {
+// 			      throw error
+// 			    }
+// 			})
 
 
 			pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount, balance-amount, first_name, last_name], (error, results) => {
@@ -452,14 +458,6 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 			      throw error
 			    }
 			})	
-			
-			
-			pool.end();
-			
-		});
-		done()
-	})
-	
 
 
 // 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
