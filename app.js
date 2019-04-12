@@ -664,6 +664,29 @@ app.post('/api/getToBalance', (req, res) => {	//api for getting balance of a cus
 	})
 });
 
+app.post('/api/getToName', (req, res) => {	//api for getting balance of a customers checking and savings account
+
+	const {email} = req.body
+	
+	const hold = [];		//holds balance
+	
+	pool.connect(function(err, client, done) {
+	    const query = client.query(new pg.Query("SELECT first_name, last_name from customer_info where email=$1", [email]))
+
+	    query.on('row', (row) => {	//push transaction of user from database to data structure
+		    hold.push(row);
+	    })
+	    query.on('error', (res) => {	//error
+		console.log(res);
+	    })
+	   query.on("end", function (result) {
+		res.json({array: hold});	//should push two rows, checking and savings
+	    });
+
+	    done()
+	})
+});
+
 
 app.post('/api/allBalance', (req, res) => {	//api for getting balance of a customers checking and savings account
 
