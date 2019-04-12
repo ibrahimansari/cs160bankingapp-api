@@ -378,86 +378,79 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	var toFirstName = '';
 	var toLastName = '';
 	
-// 	for(var i = 0; i < global.users.length; i++){		//check if emailTo is a valid user
-// 		if(global.users[i].email === emailTo && global.users[i].customer === 1){	//if valid emailTo customer found
-// 			found = true;
-// 			toFirstName = global.users[i].first_name;
-// 			toLastName = global.users[i].last_name;
-// 			break;
-// 		}
-// 	}
+	for(var i = 0; i < global.users.length; i++){		//check if emailTo is a valid user
+		if(global.users[i].email === emailTo && global.users[i].customer === 1){	//if valid emailTo customer found
+			found = true;
+			toFirstName = global.users[i].first_name;
+			toLastName = global.users[i].last_name;
+			break;
+		}
+	}
 	
-	const exists = global.users.some(user => user.email.toLowerCase() === emailTo.toLowerCase());
-	
-	if(!exists){
-		res.send("Error, customer not found");
-	}else{
+	if(found === true){
 
-	
-// 	if(found === false){				//if emailTo customer not found
-// 		res.send("Error, customer not found");
-// 	}
+		var dateObj = new Date();
+		var month = dateObj.getUTCMonth() + 1; //months from 1-12
+		var day = dateObj.getUTCDate();
+		var year = dateObj.getUTCFullYear();
 
+		var date = year + "-" + month + "-" + day;
 
-	var dateObj = new Date();
-	var month = dateObj.getUTCMonth() + 1; //months from 1-12
-	var day = dateObj.getUTCDate();
-	var year = dateObj.getUTCFullYear();
+		var getBalance = 0;		//get the current balance from emailTo
+		var data = [];
 
-	var date = year + "-" + month + "-" + day;
+		pool.connect(function(err, client, done)
+		{
+			const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 AND type='checking'", [emailTo]))
 
-	var getBalance = 0;		//get the current balance from emailTo
-	var data = [];
-		
-// 	client.query('SELECT * from bank_accounts where email=$1', [emailTo], (err, res) => {
-// 	  if (err) {
-// 	    console.log(err.stack);
-// 	  } else {
-// 	    data.push(res.rows[0]);
-// 	  }
-// 	})
-	
-// 	pool.connect(function(err, client, done)
-// 	{
-// 		const query = client.query(new pg.Query("SELECT balance from bank_accounts where email=$1 AND type='checking'", [emailTo]))
-
-// 		query.on('row', (row) => {	//push transaction of user from database to data structure
-// 			data.push(row);
-// 		})
-// 		query.on('error', (res) => {	//error
-// 			console.log(res);
-// 		})
-// 		query.on("end", function (result) {
-// 			pool.end();
-			
-// 		});
-// 		done()
-// 	})
-	
-// 			pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, data[0].balance+amount, toFirstName, toLastName], (error, results) => {
-// 			    if (error) {
-// 			      throw error
-// 			    }
-// 			})
-
-
-			pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount*-1, balance-amount, first_name, last_name], (error, results) => {
-			    if (error) {
-			      throw error
-			    }
+			query.on('row', (row) => {	//push transaction of user from database to data structure
+				data.push(row);
 			})
+			query.on('error', (res) => {	//error
+				console.log(res);
+			})
+			query.on("end", function (result) {
+				//pool.end();
 
-			pool.query("UPDATE bank_accounts SET balance=balance-$1 where email=$2 AND type='checking'", [amount, emailFrom], (error, results) => {	//update checking of emailFrom
-			    if (error) {
-			      throw error
-			    }
-			})	
+			});
+			done()
+		})
+		
+		if(data[0].status === 'Open'){
 
-			pool.query("UPDATE bank_accounts SET balance=balance+$1 where email=$2 AND type='checking'", [amount, emailTo], (error, results) => {	//update checking of emailTo
-			    if (error) {
-			      throw error
-			    }
-			})	
+				pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, (data[0].balance)+amount, toFirstName, toLastName], (error, results) => {
+				    if (error) {
+				      throw error
+				    }
+				})
+
+
+				pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount*-1, balance-amount, first_name, last_name], (error, results) => {
+				    if (error) {
+				      throw error
+				    }
+				})
+
+				pool.query("UPDATE bank_accounts SET balance=balance-$1 where email=$2 AND type='checking'", [amount, emailFrom], (error, results) => {	//update checking of emailFrom
+				    if (error) {
+				      throw error
+				    }
+				})	
+
+				pool.query("UPDATE bank_accounts SET balance=balance+$1 where email=$2 AND type='checking'", [amount, emailTo], (error, results) => {	//update checking of emailTo
+				    if (error) {
+				      throw error
+				    }
+				})
+
+				res.send("Ok");
+			
+		}else{
+			res.send("error, closed");
+		}
+	}else{
+		res.send("Error");	
+	}
 
 
 // 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, balanceEmailTo, toFirstName, toLastName], (error, results) => {
@@ -485,9 +478,6 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 // 	    }
 // 	})	
 
-		res.send("Ok");
-		
-	}
 
 });
 
