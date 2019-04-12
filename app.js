@@ -492,7 +492,7 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 
 app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds to external
 
-	const {email, amount, balance} = req.body
+	const {first_name, last_name, email, amount, balance} = req.body
 	
 	if(amount > balance){
 		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
@@ -508,13 +508,13 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	var date = year + "-" + month + "-" + day;
 	
 	
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, fromFirstName, fromLastName], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
 	})
 
-	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total, email], (error, results) => {	//remove user from customer_info table in database
+	pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [total, email], (error, results) => {	//remove user from customer_info table in database
 	    if (error) {
 	      throw error
 	    }
