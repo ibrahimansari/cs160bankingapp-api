@@ -374,23 +374,21 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
 	}
 	
-// 	var found = false;				//boolean to check if emailTo user found
-// 	var toFirstName = '';
-// 	var toLastName = '';
+	var found = false;				//boolean to check if emailTo user found
+	var toFirstName = '';
+	var toLastName = '';
 	
-// 	for(var i = 0; i < global.users.length; i++){		//check if emailTo is a valid user
-// 		if(global.users[i].email === emailTo && global.users[i].customer === 1){	//if valid emailTo customer found
-// 			found = true;
-// 			toFirstName = global.users[i].first_name;
-// 			toLastName = global.users[i].last_name;
-// 			break;
-// 		}
-// 	}
-	
-	const user = global.users.find(user => user.email.toLowerCase() === emailTo);
+	for(var i = 0; i < global.users.length; i++){		//check if emailTo is a valid user
+		if(global.users[i].email === emailTo && global.users[i].customer === 1){	//if valid emailTo customer found
+			found = true;
+			toFirstName = global.users[i].first_name;
+			toLastName = global.users[i].last_name;
+			break;
+		}
+	}
 
 	
-	if(user){
+	if(found === true){
 
 		var dateObj = new Date();
 		var month = dateObj.getUTCMonth() + 1; //months from 1-12
@@ -421,11 +419,11 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 		
 		if(data[0].status === 'Open'){
 
-				pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, (data[0].balance)+amount, user.first_name, user.last_name], (error, results) => {
-				    if (error) {
-				      throw error
-				    }
-				})
+// 				pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, (data[0].balance)+amount, user.first_name, user.last_name], (error, results) => {
+// 				    if (error) {
+// 				      throw error
+// 				    }
+// 				})
 
 
 				pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount*-1, balance-amount, first_name, last_name], (error, results) => {
