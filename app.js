@@ -534,7 +534,7 @@ app.post('/api/getToBalance', (req, res) => {	//api for getting balance of a cus
 		   query.on("end", function (result) {
 			   console.log(s);
 			   console.log("called");
-			res.json({holdArray:s});
+			res.json({array:s});
 			console.log(s); 
 		   });
 
