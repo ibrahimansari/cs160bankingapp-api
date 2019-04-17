@@ -31,7 +31,8 @@ var connectionString = {		//connect to db
     port: 5432,
     user: 'xmfxzigqqctouo',
     password: 'c32fb92ec8652dd3837ed8423fa1eef3938b939ddb06235b19150f883871a087',
-    database: 'dbds5lgqf1gspn',
+		database: 'dbds5lgqf1gspn',
+		ssl:true
 }
 
 var pool = new pg.Pool(connectionString);
