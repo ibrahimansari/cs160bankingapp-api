@@ -193,8 +193,8 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			})
 			
 			//increment account numbers 
-			global.checkingAccountNumber = global.checkingAccountNumber+1;
-			global.savingsAccountNumber = global.savingsAccountNumber+1;
+			// global.checkingAccountNumber = global.checkingAccountNumber+1;
+			// global.savingsAccountNumber = global.savingsAccountNumber+1;
 			
 			res.send('Ok');
 		}else{
