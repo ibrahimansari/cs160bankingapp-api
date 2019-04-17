@@ -182,10 +182,11 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			//first_name, last_name, email, account_number, status, balance, type
 			//Initialize savings and checking accounts to closed and value of 0 
 			var accountNumber = global.savingsAccountNumber;
-			exists = global.users.some(user => user.account_number === accountNumber)
+			exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
 			while(exists)
 			{
 				accountNumber = accountNumber + 1;
+				exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
 			}
 			global.savingsAccountNumber = accountNumber;
 			
@@ -196,10 +197,11 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			})
 			
 			accountNumber = global.checkingAccountNumber;
-			exists = global.users.some(user => user.account_number === accountNumber)
+			exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
 			while(exists)
 			{
 				accountNumber = accountNumber + 1;
+				exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
 			}
 			global.checkingAccountNumber = accountNumber;
 			
