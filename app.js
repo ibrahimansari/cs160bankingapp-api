@@ -153,7 +153,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 	var dateHold = year + "-" + month + "-" + day;
 
 	if( email && password){
-		const exists = global.users.some(user => user.email.toLowerCase() === email.toLowerCase())
+		var exists = global.users.some(user => user.email.toLowerCase() === email.toLowerCase())
 	
 		if(!exists){			//if no user exists in db, create that user
 			const user = {
@@ -182,7 +182,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			//first_name, last_name, email, account_number, status, balance, type
 			//Initialize savings and checking accounts to closed and value of 0 
 			var accountNumber = global.savingsAccountNumber;
-			var exists = global.users.some(user => user.account_number === accountNumber)
+			exists = global.users.some(user => user.account_number === accountNumber)
 			while(exists)
 			{
 				accountNumber = accountNumber + 1;
@@ -196,7 +196,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			})
 			
 			accountNumber = global.checkingAccountNumber;
-			var exists = global.users.some(user => user.account_number === accountNumber)
+			exists = global.users.some(user => user.account_number === accountNumber)
 			while(exists)
 			{
 				accountNumber = accountNumber + 1;
