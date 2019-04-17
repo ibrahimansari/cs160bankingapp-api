@@ -183,6 +183,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			//Initialize savings and checking accounts to closed and value of 0 
 			var accountNumber = global.savingsAccountNumber;
 			exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
+			console.log(exists);
 			while(exists)
 			{
 				accountNumber = accountNumber + 1;
