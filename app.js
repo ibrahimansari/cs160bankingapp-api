@@ -152,7 +152,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 	var dateHold = year + "-" + month + "-" + day;
 
-	if( email && password){
+	if(email && password){
 		var exists = global.users.some(user => user.email.toLowerCase() === email.toLowerCase())
 	
 		if(!exists){			//if no user exists in db, create that user
