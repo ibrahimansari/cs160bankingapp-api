@@ -46,14 +46,6 @@ pool.connect(function(err, client, done) {
     query.on('error', (res) => {	//error
         console.log(res);
     })
-	
-//     const queryT = client.query(new pg.Query("SELECT * from transaction"))	//transaction data push from database
-//     queryT.on('row', (row) => {	//push data from database to data structure
-// 	 userTransaction.push(row);
-//     })
-//     queryT.on('error', (res) => {	//error
-//         console.log(res);
-//     })
 
     done()
 })
@@ -95,21 +87,7 @@ app.post('/api/validateUser', (req, res) => {			//api for validating user when s
 			let val = 'Valid Login' + user.customer; //1 represents customer, 0 represents manager
 
 			if(user.customer === 1){	//if a customer, get only this customer's transactions
-// 				pool.connect(function(err, client, done) {
-// 					    const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
 
-// 					    query.on('row', (row) => {	//push transaction of user from database to data structure
-// 						 specificTransaction.push(row);
-// 					    })
-// 					    query.on('error', (res) => {	//error
-// 						console.log(res);
-// 					    })
-// 					   query.on("end", function (result) {
-// 					    });
-
-// 					    done()
-// 				})
-				
 				const accountArray = []		//holds savings and checking account info for user
 				pool.connect(function(err, client, done) {		//checking and savings balance and account numbers get
 					    const query = client.query(new pg.Query("SELECT * from bank_accounts where email=$1", [user.email]))
@@ -402,14 +380,6 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 	
 	console.log("transferring externally");
 	
-// 	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total, email], (error, results) => {	//remove user from customer_info table in database
-// 	    if (error) {
-// 	      throw error
-// 	    }
-// 	})	
-	
-	
-	
 	res.send("Ok");
 	
 });
@@ -502,14 +472,7 @@ app.post('/api/depositCheque', (req, res) =>
 	      throw error
 	    }
 	})
-	
-// 	pool.query('UPDATE customer_info SET balance=$1 where email=$2', [total,email], (error, results) => {	
-// 	    if (error) {
-// 	      throw error
-// 	    }
-// 	})
-	
-	//count = count+1;
+
 });
 
 
@@ -530,43 +493,14 @@ app.post('/api/getToBalance', (req, res) => {	//api for getting balance of a cus
 			    s.push(row);
 		    })
 		    query.on('error', (res) => {	//error
-			console.log(res);
 		    })
 		   query.on("end", function (result) {
-			   console.log(s);
-			   console.log("called");
 			res.json({array:s});
-			console.log(s); 
 		   });
 
 		    done()
 	})
 
-});
-
-app.post('/api/getToName', (req, res) => {	//api for getting balance of a customers checking and savings account
-
-	const {email} = req.body
-	
-	const hold = [];		//holds balance
-	
-	pool.connect(function(err, client, done) {
-	    const query = client.query(new pg.Query("SELECT first_name, last_name from customer_info where email=$1", [email]))
-
-	    query.on('row', (row) => {	//push transaction of user from database to data structure
-		    hold.push(row);		    
-		    console.log("name 2");
-		    console.log(row);
-	    })
-	    query.on('error', (res) => {	//error
-		console.log(res);
-	    })
-	   query.on("end", function (result) {
-		res.json({array: hold});	//should push two rows, checking and savings
-	    });
-
-	    done()
-	})
 });
 
 
