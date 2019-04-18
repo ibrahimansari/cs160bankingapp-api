@@ -611,6 +611,8 @@ app.post('/api/updateAccountNumber', (req, res) => 	//update bank account number
 	      throw error
 	    }
 	})
+	
+	res.send("ok");
 
 });
 
