@@ -570,7 +570,7 @@ app.post('/api/balanceAllUsers', (req, res) => {  //api for getting balance of a
 	
 });
 
-app.post('/api/getUserTransactions',(req,res)=>{		//users transactions
+app.post('/api/getUserTransactions',(req,res)=>{		//get all transactions for a particular user
 	let {email} = req.body;
 	
 	const transactionsArray = []		//holds transactions
@@ -591,6 +591,29 @@ app.post('/api/getUserTransactions',(req,res)=>{		//users transactions
 		    done()
 	})	
 })
+
+
+app.post('/api/updateAccountNumber', (req, res) => 	//update bank account number for checking and savings by adding constants
+{	
+
+	const {email} = req.body;
+
+	
+	pool.query("UPDATE bank_accounts SET account_number=account_number+$1 where email=$2 AND type='savings'", [global.savingsAccountNumber,email], (error, results) => {	
+	    if (error) 
+		{
+	      throw error
+	    }
+	});
+	
+	pool.query("UPDATE bank_accounts SET account_number=account_number+$1 where email=$2 AND type='checking'", [global.checkingAccountNumber,email], (error, results) => {	
+	    if (error) {
+	      throw error
+	    }
+	})
+
+});
+
 
 
 
