@@ -191,7 +191,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			}
 			global.savingsAccountNumber = accountNumber;
 			
-			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, accountNumber, 'Closed', 0 ,'savings'], (error, results) => {
+			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, DEFAULT, $5, $6, $7)', [user.first_name, user.last_name, user.email, 'Closed', 0 ,'savings'], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
@@ -206,7 +206,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			}
 			global.checkingAccountNumber = accountNumber;
 			
-			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, accountNumber, 'Closed', 0 ,'checking'], (error, results) => {
+			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, DEFAULT, $5, $6, $7)', [user.first_name, user.last_name, user.email, 'Closed', 0 ,'checking'], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
