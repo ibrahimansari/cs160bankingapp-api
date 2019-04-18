@@ -181,15 +181,15 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			
 			//first_name, last_name, email, account_number, status, balance, type
 			//Initialize savings and checking accounts to closed and value of 0 
-			var accountNumber = global.savingsAccountNumber;
-			exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
-			console.log(exists);
-			while(exists)
-			{
-				accountNumber = accountNumber + 1;
-				exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
-			}
-			global.savingsAccountNumber = accountNumber;
+// 			var accountNumber = global.savingsAccountNumber;
+// 			exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
+// 			console.log(exists);
+// 			while(exists)
+// 			{
+// 				accountNumber = accountNumber + 1;
+// 				exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
+// 			}
+// 			global.savingsAccountNumber = accountNumber;
 			
 			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, DEFAULT, $5, $6, $7)', [user.first_name, user.last_name, user.email, 'Closed', 0 ,'savings'], (error, results) => {
 			    if (error) {
@@ -197,14 +197,14 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			    }
 			})
 			
-			accountNumber = global.checkingAccountNumber;
-			exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
-			while(exists)
-			{
-				accountNumber = accountNumber + 1;
-				exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
-			}
-			global.checkingAccountNumber = accountNumber;
+// 			accountNumber = global.checkingAccountNumber;
+// 			exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
+// 			while(exists)
+// 			{
+// 				accountNumber = accountNumber + 1;
+// 				exists = pg.query("SELECT exists (SELECT $ FROM bank_accounts WHERE column = account_number LIMIT 1)", [accountNumber]);
+// 			}
+// 			global.checkingAccountNumber = accountNumber;
 			
 			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, DEFAULT, $5, $6, $7)', [user.first_name, user.last_name, user.email, 'Closed', 0 ,'checking'], (error, results) => {
 			    if (error) {
