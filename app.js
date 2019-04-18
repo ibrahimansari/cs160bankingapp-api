@@ -570,6 +570,28 @@ app.post('/api/balanceAllUsers', (req, res) => {  //api for getting balance of a
 	
 });
 
+app.post('/api/getUserTransactions',(req,res)=>{		//users transactions
+	let {email} = req.body;
+	
+	const transactionsArray = []		//holds transactions
+
+	pool.connect(function(err, client, done) {		
+		    const query = client.query(new pg.Query("SELECT * from transactions where email=$1", [email]))
+
+		    query.on('row', (row) => {	//push transaction of user from database to data structure
+			    transactionsArray.push(row);
+		    })
+		    query.on('error', (res) => {	//error
+			console.log(res);
+		    })
+		   query.on("end", function (result) {
+			res.json({array:transactionsArray});
+		    });
+
+		    done()
+	})	
+})
+
 
 
 app.post('/api/closeAccount', (req, res) => {	//api for closing either a savings or checking bank account
@@ -599,6 +621,8 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 	
 	res.send("Ok");
 });
+
+
 
 
 app.post('/api/resetPassword', (req, res) => {
