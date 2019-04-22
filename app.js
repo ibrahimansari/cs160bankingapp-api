@@ -599,7 +599,8 @@ app.post('/api/closeAccount', (req, res) => {	//api for closing either a savings
 	
 	const {email, type} = req.body		//type represents savings or checking account
 	
-
+	console.log('closing ' + type + ' account for ' + email);
+	
 	pool.query('UPDATE bank_accounts SET status="Closed" where email=$1 AND type=$2', [email, type], (error, results) => {	
 	    if (error) {
 	      throw error
@@ -613,6 +614,8 @@ app.post('/api/closeAccount', (req, res) => {	//api for closing either a savings
 app.post('/api/openAccount', (req, res) => {	//api for opening either a savings or checking bank account
 	
 	const {email, type} = req.body		//type represents savings or checking account
+	
+	console.log('closing ' + type + ' account for ' + email);
 	
 	pool.query('UPDATE bank_accounts SET status="Open" where email=$1 AND type=$2', [email, type], (error, results) => {	//update status 
 	    if (error) {
