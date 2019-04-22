@@ -615,9 +615,9 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 	
 	const {email, type} = req.body		//type represents savings or checking account
 	
-	console.log('closing ' + type + ' account for ' + email);
+	console.log('opening ' + type + ' account for ' + email);
 	
-	pool.query('UPDATE bank_accounts SET status="Open" where email=$1 AND type=$2', [email, type], (error, results) => {	//update status 
+	pool.query("UPDATE bank_accounts SET status='Open' where email=$1 AND type=$2", [email, type], (error, results) => {	//update status 
 	    if (error) {
 	      throw error
 	    }
