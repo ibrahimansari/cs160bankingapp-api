@@ -601,7 +601,7 @@ app.post('/api/closeAccount', (req, res) => {	//api for closing either a savings
 	
 	console.log('closing ' + type + ' account for ' + email);
 	
-	pool.query('UPDATE bank_accounts SET status="Closed" where email=$1 AND type=$2', [email, type], (error, results) => {	
+	pool.query("UPDATE bank_accounts SET status='Closed' where email=$1 AND type=$2", [email, type], (error, results) => {	
 	    if (error) {
 	      throw error
 	    }
