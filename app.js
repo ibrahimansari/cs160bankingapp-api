@@ -382,13 +382,13 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 	}else{
 		
 		//first_name, last_name, email, account_number, status, balance, type
-		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [balanceFrom-amount,email, from], (error, results) => {	
+		pool.query('UPDATE bank_accounts SET balance=balance-$1 where email=$2 AND type=$3', [amount,email, from], (error, results) => {	
 		    if (error) {
 		      throw error
 		    }
 		})
 		
-		pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type=$3', [balanceTo+amount,email, to], (error, results) => {	
+		pool.query('UPDATE bank_accounts SET balance=balance+$1 where email=$2 AND type=$3', [amount,email, to], (error, results) => {	
 		    if (error) {
 		      throw error
 		    }
