@@ -626,6 +626,36 @@ app.post('/api/openAccount', (req, res) => {	//api for opening either a savings 
 	res.send("Ok");
 });
 
+app.post('/api/autobill',(req,res)=>{		//autobill api to retrieve autobill information for a user
+	let {email} = req.body;
+	
+	const holdArray = []		//holds autobill rows
+	
+	if(email === undefined){
+		res.send({
+			success:false,
+			error: "Error - Invalid Email"
+		})
+	}else {
+
+		pool.connect(function(err, client, done) {		
+		    const query = client.query(new pg.Query("SELECT * from auto_bill where email = $1 order by date desc", [email]))
+
+		    query.on('row', (row) => {	//push transaction of user from database to data structure
+			  holdArray.push(row);
+		    })
+		    query.on('error', (res) => {	//error
+			console.log(res);
+		    })
+		   query.on("end", function (result) {
+			res.json({array:holdArray});
+		    });
+
+		    done()
+		})	
+       }
+})
+
 
 
 
