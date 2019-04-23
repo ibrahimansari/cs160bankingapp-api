@@ -204,12 +204,12 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	
-	let dateObj = new Date();
-	let month = dateObj.getUTCMonth() + 1; //months from 1-12
-	let day = dateObj.getUTCDate();
-	let year = dateObj.getUTCFullYear();
+	let dateObj =  new Date().toLocaleString();
+// 	let month = dateObj.getUTCMonth() + 1; //months from 1-12
+// 	let day = dateObj.getUTCDate();
+// 	let year = dateObj.getUTCFullYear();
 
-	let date = year + "-" + month + "-" + day;
+// 	let date = year + "-" + month + "-" + day;
 
 	const {first_name, last_name, email, amount, balance} = req.body
 	let total = balance + amount;	//add amount to users checking
