@@ -310,7 +310,7 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 	    }
 	})
 	
-	res.send("ok");
+	res.send("Ok");
 
 });
 
