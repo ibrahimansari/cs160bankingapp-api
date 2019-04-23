@@ -208,7 +208,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 // 	let month = dateObj.getUTCMonth() + 1; //months from 1-12
 // 	let day = dateObj.getUTCDate();
 // 	let year = dateObj.getUTCFullYear();
-
+	console.log(dateObj);
 // 	let date = year + "-" + month + "-" + day;
 
 	const {first_name, last_name, email, amount, balance} = req.body
@@ -446,15 +446,15 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 app.post('/api/depositCheque', (req, res) => 
 {	
 	
-	var dateObj = new Date();
-	var month = dateObj.getUTCMonth() + 1; //months from 1-12
-	var day = dateObj.getUTCDate();
-	var year = dateObj.getUTCFullYear();
+	let date = new Date().toLocaleString();
+// 	let month = dateObj.getUTCMonth() + 1; //months from 1-12
+// 	let day = dateObj.getUTCDate();
+// 	let year = dateObj.getUTCFullYear();
 
-	var date = year + "-" + month + "-" + day;
+// 	let date = year + "-" + month + "-" + day;
 
 	const {email, first_name, last_name, amount, balance} = req.body;
-	var total = balance + amount;
+	let total = balance + amount;
 	
 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) 
