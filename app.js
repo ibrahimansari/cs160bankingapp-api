@@ -205,21 +205,21 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	
 	let dateObj =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
- 	let month = dateObj.getUTCMonth() + 1; //months from 1-12
- 	let day = dateObj.getUTCDate();
- 	let year = dateObj.getUTCFullYear();
-	console.log(dateObj);
+//  	let month = dateObj.getUTCMonth() + 1; //months from 1-12
+//  	let day = dateObj.getUTCDate();
+//  	let year = dateObj.getUTCFullYear();
+// 	console.log(dateObj);
 	
-	let hour = dateObj.getHours();
-	hour = (hour < 10 ? "0" : "") + hour;
+// 	let hour = dateObj.getHours();
+// 	hour = (hour < 10 ? "0" : "") + hour;
 
-	let min  = dateObj.getMinutes();
-	min = (min < 10 ? "0" : "") + min;
+// 	let min  = dateObj.getMinutes();
+// 	min = (min < 10 ? "0" : "") + min;
 	
 	//let sec = d
 	
- 	let date = year + "-" + month + "-" + day + " " + hour + ":" + min;
-	console.log(date);
+//  	let date = year + "-" + month + "-" + day + " " + hour + ":" + min;
+// 	console.log(date);
 	
 	const {first_name, last_name, email, amount, balance} = req.body
 	let total = balance + amount;	//add amount to users checking
@@ -227,30 +227,19 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	
 	let statusHold= [];
 	
-// 	pool.query("SELECT status FROM bank_accounts where email =$1 AND type='checking')", [email], (error, results) => {
-// 	    if (error) {
-// 	      throw error
-// 	    }else{
-// 	      statusHold.push(results.rows);
-// 	    }
-// 	})
-	
-// 	if(statusHold[0].status === 'Closed'){
-// 		res.send("error");
-// 	}else{
-		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, dateObj, amount, total, first_name, last_name], (error, results) => {
-		    if (error) {
-		      throw error
-		    }
-		})
 
-		//update balance of checking
-		pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [total, email], (error, results) => {	
-		    if (error) {
-		      throw error
-		    }
-		})	
-// 	}
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, dateObj, amount, total, first_name, last_name], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})
+
+	//update balance of checking
+	pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [total, email], (error, results) => {	
+	    if (error) {
+	      throw error
+	    }
+	})	
 	
 	res.send("Ok");
 // 	const specificTransaction = [];
