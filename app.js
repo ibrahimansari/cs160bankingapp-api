@@ -204,22 +204,7 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	
-	let dateObj =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-//  	let month = dateObj.getUTCMonth() + 1; //months from 1-12
-//  	let day = dateObj.getUTCDate();
-//  	let year = dateObj.getUTCFullYear();
-// 	console.log(dateObj);
-	
-// 	let hour = dateObj.getHours();
-// 	hour = (hour < 10 ? "0" : "") + hour;
-
-// 	let min  = dateObj.getMinutes();
-// 	min = (min < 10 ? "0" : "") + min;
-	
-	//let sec = d
-	
-//  	let date = year + "-" + month + "-" + day + " " + hour + ":" + min;
-// 	console.log(date);
+	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 	
 	const {first_name, last_name, email, amount, balance} = req.body
 	let total = balance + amount;	//add amount to users checking
@@ -228,7 +213,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	let statusHold= [];
 	
 
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, dateObj, amount, total, first_name, last_name], (error, results) => {
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
 	    if (error) {
 	      throw error
 	    }
@@ -264,17 +249,11 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 
 app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from checking
 	console.log('withdrawing');
-	var dateObj = new Date();
-	var month = dateObj.getUTCMonth() + 1; //months from 1-12
-	var day = dateObj.getUTCDate();
-	var year = dateObj.getUTCFullYear();
-
-	var date = year + "-" + month + "-" + day;
+	
+	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
 	const {first_name, last_name, email, amount, balance} = req.body
 	var total = balance - amount;	//add amount to users checking
-	
-
 	
 	if(total < 0){
 		res.send("Error, not enough funds");	
@@ -304,15 +283,8 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
 	}
 
-
-	var dateObj = new Date();
-	var month = dateObj.getUTCMonth() + 1; //months from 1-12
-	var day = dateObj.getUTCDate();
-	var year = dateObj.getUTCFullYear();
-
-	var date = year + "-" + month + "-" + day;
+	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 	
-
 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailTo, date, amount, toBalance+amount, toFirstName, toLastName], (error, results) => {
 	    if (error) {
 	      throw error
@@ -351,16 +323,10 @@ app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds
 		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
 	}
 	
-	var total = balance - amount;			//frontend passing balance or db query?
+	let total = balance - amount;			//frontend passing balance or db query?
 	
-	var dateObj = new Date();
-	var month = dateObj.getUTCMonth() + 1; //months from 1-12
-	var day = dateObj.getUTCDate();
-	var year = dateObj.getUTCFullYear();
+	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
-	var date = year + "-" + month + "-" + day;
-	
-	
 	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount*-1, total, first_name, last_name], (error, results) => {
 	    if (error) {
 	      throw error
@@ -385,19 +351,14 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 
 	const {email, accountFrom, accountTo, amount, toBalance, fromBalance} = req.body
 
-	var dateObj = new Date();
-	var month = dateObj.getUTCMonth() + 1; //months from 1-12
-	var day = dateObj.getUTCDate();
-	var year = dateObj.getUTCFullYear();
+	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
-	var date = year + "-" + month + "-" + day;
-
-	var total = 0;
+	let total = 0;
 	
-	var from = '';
-        var to = '';
-        var balanceFrom = 0;
-        var balanceTo = 0;
+	let from = '';
+        let to = '';
+        let balanceFrom = 0;
+        let balanceTo = 0;
         
         if(accountFrom === 'checking'){
             from = 'checking';
@@ -437,36 +398,6 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 		
 		res.send("Ok");
 	}
-
-});
-
-
-//deposit a check
-app.post('/api/depositCheque', (req, res) => 
-{	
-	
-	let date = new Date().toLocaleString();
-// 	let month = dateObj.getUTCMonth() + 1; //months from 1-12
-// 	let day = dateObj.getUTCDate();
-// 	let year = dateObj.getUTCFullYear();
-
-// 	let date = year + "-" + month + "-" + day;
-
-	const {email, first_name, last_name, amount, balance} = req.body;
-	let total = balance + amount;
-	
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
-	    if (error) 
-		{
-	      throw error
-	    }
-	});
-	
-	pool.query('UPDATE bank_accounts SET balance=$1 where email=$2 AND type="checking"', [total,email], (error, results) => {	
-	    if (error) {
-	      throw error
-	    }
-	})
 
 });
 
