@@ -204,18 +204,18 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	
-	var dateObj = new Date();
-	var month = dateObj.getUTCMonth() + 1; //months from 1-12
-	var day = dateObj.getUTCDate();
-	var year = dateObj.getUTCFullYear();
+	let dateObj = new Date();
+	let month = dateObj.getUTCMonth() + 1; //months from 1-12
+	let day = dateObj.getUTCDate();
+	let year = dateObj.getUTCFullYear();
 
-	var date = year + "-" + month + "-" + day;
+	let date = year + "-" + month + "-" + day;
 
 	const {first_name, last_name, email, amount, balance} = req.body
-	var total = balance + amount;	//add amount to users checking
+	let total = balance + amount;	//add amount to users checking
 	console.log('depositing');
 	
-	var statusHold= [];
+	let statusHold= [];
 	
 // 	pool.query("SELECT status FROM bank_accounts where email =$1 AND type='checking')", [email], (error, results) => {
 // 	    if (error) {
@@ -228,7 +228,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 // 	if(statusHold[0].status === 'Closed'){
 // 		res.send("error");
 // 	}else{
-		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
+		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, dateObj, amount, total, first_name, last_name], (error, results) => {
 		    if (error) {
 		      throw error
 		    }
