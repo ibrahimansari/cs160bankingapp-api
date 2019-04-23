@@ -209,8 +209,16 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
  	let day = dateObj.getUTCDate();
  	let year = dateObj.getUTCFullYear();
 	console.log(dateObj);
- 	let date = year + "-" + month + "-" + day;
+	
+	let hour = date.getHours();
+	hour = (hour < 10 ? "0" : "") + hour;
 
+	let min  = date.getMinutes();
+	min = (min < 10 ? "0" : "") + min;
+	
+ 	let date = year + "-" + month + "-" + day + " " + hour + ":" + min;
+	console.log(date);
+	
 	const {first_name, last_name, email, amount, balance} = req.body
 	let total = balance + amount;	//add amount to users checking
 	console.log('depositing');
