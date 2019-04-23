@@ -204,17 +204,19 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 
 app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	
-	let dateObj =  new Date();
+	let dateObj =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
  	let month = dateObj.getUTCMonth() + 1; //months from 1-12
  	let day = dateObj.getUTCDate();
  	let year = dateObj.getUTCFullYear();
 	console.log(dateObj);
 	
-	let hour = date.getHours();
+	let hour = dateObj.getHours();
 	hour = (hour < 10 ? "0" : "") + hour;
 
-	let min  = date.getMinutes();
+	let min  = dateObj.getMinutes();
 	min = (min < 10 ? "0" : "") + min;
+	
+	//let sec = d
 	
  	let date = year + "-" + month + "-" + day + " " + hour + ":" + min;
 	console.log(date);
@@ -236,7 +238,7 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 // 	if(statusHold[0].status === 'Closed'){
 // 		res.send("error");
 // 	}else{
-		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
+		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, dateObj, amount, total, first_name, last_name], (error, results) => {
 		    if (error) {
 		      throw error
 		    }
