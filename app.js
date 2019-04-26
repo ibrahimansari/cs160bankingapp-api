@@ -404,14 +404,14 @@ app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to 
 
 app.post('/api/getToBalance', (req, res) => {	//api for getting balance of a customers checking and savings account
 
-	const {email} = req.body
+	const {emailTo} = req.body
 	
 	const s = [];		//holds balance
 	
 	console.log("getToBalance API called");
 	
 	pool.connect(function(err, client, done) {
-		    const query = client.query(new pg.Query("SELECT * from bank_accounts where type='checking' AND email=$1",[email]))
+		    const query = client.query(new pg.Query("SELECT * from bank_accounts where type='checking' AND email=$1",[emailTo]))
 
 
 		    query.on('row', (row) => {	//push transaction of user from database to data structure
