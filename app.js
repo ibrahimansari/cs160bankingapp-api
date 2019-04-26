@@ -560,30 +560,23 @@ app.post('/api/autobill',(req,res)=>{		//autobill api to retrieve autobill infor
 	let {email} = req.body;
 	
 	const holdArray = []		//holds autobill rows
-	
-	if(email === undefined){
-		res.send({
-			success:false,
-			error: "Error - Invalid Email"
-		})
-	}else {
 
-		pool.connect(function(err, client, done) {		
-		    const query = client.query(new pg.Query("SELECT * from auto_bill where email = $1 order by date desc", [email]))
+	pool.connect(function(err, client, done) {		
+	    const query = client.query(new pg.Query("SELECT * from auto_bill where email = $1", [email]))
 
-		    query.on('row', (row) => {	//push transaction of user from database to data structure
-			  holdArray.push(row);
-		    })
-		    query.on('error', (res) => {	//error
-			console.log(res);
-		    })
-		   query.on("end", function (result) {
-			res.json({array:holdArray});
-		    });
+	    query.on('row', (row) => {	//push transaction of user from database to data structure
+		  holdArray.push(row);
+	    })
+	    query.on('error', (res) => {	//error
+		console.log(res);
+	    })
+	   query.on("end", function (result) {
+		res.json({array:holdArray});
+	    });
 
-		    done()
-		})	
-       }
+	    done()
+	})	
+
 })
 
 
