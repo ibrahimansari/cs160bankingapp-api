@@ -406,13 +406,12 @@ app.post('/api/getToBalance', (req, res) => {	//api for getting balance of a cus
 
 	const {email} = req.body
 	
-	const hold = [];		//holds balance
+	const s = [];		//holds balance
 	
 	console.log("getToBalance API called");
 	
-	var s = []
 	pool.connect(function(err, client, done) {
-		    const query = client.query(new pg.Query("SELECT * from bank_accounts where type='checking'"))
+		    const query = client.query(new pg.Query("SELECT * from bank_accounts where type='checking' AND email=$1",[email]))
 
 
 		    query.on('row', (row) => {	//push transaction of user from database to data structure
