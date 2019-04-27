@@ -15,17 +15,6 @@ global.savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 an
 global.checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
 
 
-var nodemailer = require('nodemailer');		//nodemailer for forgot my password
-var transporter = nodemailer.createTransport({	//set bank credentials
- service: 'gmail',
- auth: {
-        user: 'bankteam160@gmail.com',
-        pass: 'Bankteam160cs'
-    }
-});
-
-
-
 var connectionString = {		//connect to db
     host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
     port: 5432,
