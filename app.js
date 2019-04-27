@@ -5,7 +5,7 @@ const cors = require('cors')
 const TWO_HOURS = 1000 * 60 * 60 * 2
 
 const app = express(); 
-var pg = require("pg");			//postgres
+let pg = require("pg");			//postgres
 
 app.use(cors());
 
@@ -15,7 +15,7 @@ global.savingsAccountNumber = 100000;	//savingsAccountNumber starts at 100000 an
 global.checkingAccountNumber = 500000;	//checkingAccountNumber starts at 500000 and is incremented each time an account of this type is opened
 
 
-var connectionString = {		//connect to db
+let connectionString = {		//connect to db
     host: 'ec2-54-221-243-211.compute-1.amazonaws.com',
     port: 5432,
     user: 'xmfxzigqqctouo',
