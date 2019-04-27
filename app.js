@@ -227,23 +227,6 @@ app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	})	
 	
 	res.send("Ok");
-// 	const specificTransaction = [];
-// 	pool.connect(function(err, client, done)
-// 	{
-// 		const query = client.query(new pg.Query("SELECT date_stamp, amount, balance from transactions where email=$1", [user.email]))
-
-// 		query.on('row', (row) => {	//push transaction of user from database to data structure
-// 			specificTransaction.push(row);
-// 		})
-// 		query.on('error', (res) => {	//error
-// 			console.log(res);
-// 		})
-// 		query.on("end", function (result) {
-// 			res.json({transactions : specificTransaction});
-// 		});
-
-// 		done()
-// 	})
 
 });
 
@@ -251,26 +234,23 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 	console.log('withdrawing');
 	
 	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-
 	const {first_name, last_name, email, amount, balance} = req.body
-	var total = balance - amount;	//add amount to users checking
+	let total = balance - amount;	//add amount to users checking
 	
-	if(total < 0){
-		res.send("Error, not enough funds");	
-	}else{
-		pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount*-1, total, first_name, last_name], (error, results) => {
-		    if (error) {
-		      throw error
-		    }
-		})
 
-		//update balance of checking
-		pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [total, email], (error, results) => {	
-		    if (error) {
-		      throw error
-		    }
-		})	
-	}
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount*-1, total, first_name, last_name], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})
+
+	//update balance of checking
+	pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='checking'", [total, email], (error, results) => {	
+	    if (error) {
+	      throw error
+	    }
+	})	
+	
 	res.send("Ok");
 
 });
