@@ -24,50 +24,20 @@ let connectionString = {		//connect to db
 		ssl:true
 }
 
-// var pool = new pg.Pool(connectionString);
+let pool = new pg.Pool(connectionString);
 
-// pool.connect(function(err, client, done) {
+pool.connect(function(err, client, done) {
 
-//     const query = client.query(new pg.Query("SELECT * from customer_info"))
-//     query.on('row', (row) => {	//push data from database to data structure
-// 	 users.push(row);
-//     })
-//     query.on('error', (res) => {	//error
-//         console.log(res);
-//     })
+    const query = client.query(new pg.Query("SELECT * from customer_info"))
+    query.on('row', (row) => {	//push data from database to data structure
+	 users.push(row);
+    })
+    query.on('error', (res) => {	//error
+        console.log(res);
+    })
 
-//     done()
-// })
-
-const results = [];
-
-let client = new pg.Client(connectionString);
-client.connect();
-
-// Get a Postgres client from the connection pool
-pg.connect(connectionString, function(err, client, done) {
-
-	// SQL Query > Insert Data
-	let query = client.query("SELECT * from customer_info");
-
-	query.on('row', function(row) {
-	    global.users.push(row);
-	});
-
-	console.log(global.users);
-
-	// After all data is returned, close connection and return results
-	query.on('end', function() {
-	    client.end();
-	    console.log(global.users);
-	    return res.json(global.users);
-	});
-
-	// Handle Errors
-	if(err) {
-	  console.log(err);
-	}
-});
+    done()
+})
 
 
 
