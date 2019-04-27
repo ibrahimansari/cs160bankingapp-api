@@ -29,12 +29,14 @@ let pool = new pg.Pool(connectionString);
 pool.connect(function(err, client, done) {
 
     const query = client.query(new pg.Query("SELECT * from customer_info"))
-    query.on('row', (row) => {	//push data from database to data structure
-	 users.push(row);
-    })
+    
     query.on('error', (res) => {	//error
         console.log(res);
     })
+    query.on('row', (row) => {	//push data from database to data structure
+	 global.users.push(row);
+    })
+
 
     done()
 })
