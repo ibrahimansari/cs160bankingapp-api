@@ -270,8 +270,9 @@ app.post('/api/withdrawChecking', (req, res) => {	//api for withdrawing from che
 		      throw error
 		    }
 		})	
-		res.send("Ok");
 	}
+	res.send("Ok");
+
 });
 
 
