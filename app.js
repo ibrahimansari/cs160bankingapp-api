@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const TWO_HOURS = 1000 * 60 * 60 * 2
 
-const app = express();
+const app = express(); 
 var pg = require("pg");			//postgres
 
 app.use(cors());
@@ -555,40 +555,6 @@ app.post('/api/autobill',(req,res)=>{		//autobill api to retrieve autobill infor
 	})	
 
 })
-
-
-
-
-app.post('/api/resetPassword', (req, res) => {
-	
-	const {email} = req.body;
-	
-	const user = global.users.find(user => user.email.toLowerCase() === email.toLowerCase() && user.password === password);
-	
-	if(user){
-	
-		const mailOptions = {	         //mail structure for reset password
-		  from: 'bankteam160@gmail.com', // sender address
-		  to: 'bankteam160@gmail.com',   // change receiver to email
-		  subject: 'Reset Your Password', // Subject line
-		  html: '<p>Your html here</p>'// plain text body
-		};
-
-		transporter.sendMail(mailOptions, function (err, info) {	//send the email
-		   if(err)
-		     console.log(err)
-		   else
-		     console.log(info);
-		});
-		
-		res.send("Ok");
-		
-	}else{
-		res.send("Error, email not found");	
-	}
-
-	
-});
 
 
 // app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
