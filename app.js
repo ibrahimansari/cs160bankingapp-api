@@ -518,6 +518,27 @@ app.post('/api/autobill',(req,res)=>{		//autobill api to retrieve autobill infor
 
 })
 
+app.post('/api/storeautobill',(req,res)=>{		//autobill api to retrieve autobill information for a user
+	let {email, amount, name, date} = req.body;
+	
+	pool.query('INSERT INTO auto_bill (email, amount, bill_name, bill_date) VALUES ($1, $2, $3, $4)', [email, amount, name, date], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})
+})
+
+
+app.post('/api/removeautobill',(req,res)=>{		//autobill api to retrieve autobill information for a user
+	let {email, name} = req.body;
+	
+	pool.query('delete from auto_bill where email=$1 AND bill_name = $2', [email, name], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})
+})
+
 
 // app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
 app.listen(process.env.PORT || 3000, function(){
