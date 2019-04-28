@@ -173,13 +173,13 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 			  })
 			
 			
-			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, DEFAULT, $4, $5, $6)', [user.first_name, user.last_name, user.email, 'Closed', 0 ,'savings'], (error, results) => {
+			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type, zipcode) VALUES ($1, $2, $3, DEFAULT, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, 'Closed', 0 ,'savings', user.zipcode], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
 			})
 
-			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type) VALUES ($1, $2, $3, DEFAULT, $4, $5, $6)', [user.first_name, user.last_name, user.email, 'Closed', 0 ,'checking'], (error, results) => {
+			pool.query('INSERT INTO bank_accounts (first_name, last_name, email, account_number, status, balance, type, zipcode) VALUES ($1, $2, $3, DEFAULT, $4, $5, $6, $7)', [user.first_name, user.last_name, user.email, 'Closed', 0 ,'checking', user.zipcode], (error, results) => {
 			    if (error) {
 			      throw error
 			    }
