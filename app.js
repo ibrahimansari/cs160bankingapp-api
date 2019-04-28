@@ -286,37 +286,6 @@ app.post('/api/transferToInternal', (req, res) => {	//api for transferring funds
 });
 
 
-app.post('/api/transferToExternal', (req, res) => {	//api for transferring funds to external
-
-	const {first_name, last_name, emailFrom, amount, balance} = req.body
-	
-	if(amount > balance){
-		res.send("Error, not enough funds");	//if emailFrom doesn't have enough funds to transfer	
-	}
-	
-	let total = balance - amount;			//frontend passing balance or db query?
-	
-	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-
-	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [emailFrom, date, amount*-1, total, first_name, last_name], (error, results) => {
-	    if (error) {
-	      throw error
-	    }
-	})
-
-	pool.query("UPDATE bank_accounts SET balance=balance-$1 where email=$2 AND type='checking'", [amount, emailFrom], (error, results) => {	//remove user from customer_info table in database
-	    if (error) {
-	      throw error
-	    }
-	})	
-	
-	console.log("transferring externally");
-	
-	res.send("Ok");
-	
-});
-
-
 //need to add it to the transaction table?
 app.post('/api/transferSelf', (req, res) => {	//api to transfer from savings to checking or checking to savings for self
 
