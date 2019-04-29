@@ -523,6 +523,7 @@ app.post('/api/storeautobill',(req,res)=>{		//autobill api to retrieve autobill 
 	
 	pool.query('INSERT INTO auto_bill (email, amount, bill_name, bill_date) VALUES ($1, $2, $3, $4)', [email, amount, name, date], (error, results) => {
 	    if (error) {
+	      res.send("Error");
 	      throw error
 	    }
 	})
