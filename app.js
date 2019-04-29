@@ -534,7 +534,7 @@ app.post('/api/removeautobill',(req,res)=>{		//autobill api to retrieve autobill
 	
 	let today = new Date(); // Or Date.today()
 	let tomorrow = today.add(1).day();
-	console.log("today: );
+	console.log("today: ");
 	console.log(today);
 	console.log("tomrrow ");
 	console.log(tomorrow);
