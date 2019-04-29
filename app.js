@@ -545,6 +545,29 @@ app.post('/api/removeautobill',(req,res)=>{		//autobill api to retrieve autobill
 	res.send("Ok");
 
 })
+
+app.post('/api/findBill',(req,res)=>{		//autobill api to retrieve autobill information for a user
+	let {email, name} = req.body;
+	
+	const holdArray = []		//holds autobill rows
+
+	pool.connect(function(err, client, done) {		
+	    const query = client.query(new pg.Query("SELECT * from auto_bill where email = $1 AND bill_name = $2", [email, name.toLowerCase()]))
+
+	    query.on('row', (row) => {	//push transaction of user from database to data structure
+		  holdArray.push(row);
+	    })
+	    query.on('error', (res) => {	//error
+		console.log(res);
+	    })
+	   query.on("end", function (result) {
+		res.json({array:holdArray});
+	    });
+
+	    done()
+	})	
+
+})
     
 
 // app.listen(PORT, () => console.log(`http://localhost'${PORT}`))
