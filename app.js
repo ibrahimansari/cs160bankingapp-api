@@ -526,6 +526,8 @@ app.post('/api/storeautobill',(req,res)=>{		//autobill api to retrieve autobill 
 	      throw error
 	    }
 	})
+	
+	res.send("Ok");
 })
 
 
@@ -538,6 +540,9 @@ app.post('/api/removeautobill',(req,res)=>{		//autobill api to retrieve autobill
 	      throw error
 	    }
 	})
+	
+	res.send("Ok");
+
 })
     
 
