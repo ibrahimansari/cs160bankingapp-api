@@ -533,7 +533,7 @@ app.post('/api/storeautobill',(req,res)=>{		//autobill api to retrieve autobill 
 
 app.post('/api/removeautobill',(req,res)=>{		//autobill api to retrieve autobill information for a user
 	let {email, name} = req.body;
-	
+	console.log(name);
 	
 	pool.query('delete from auto_bill where email=$1 AND bill_name = $2', [email, name], (error, results) => {
 	    if (error) {
@@ -547,6 +547,7 @@ app.post('/api/removeautobill',(req,res)=>{		//autobill api to retrieve autobill
 
 app.post('/api/findBill',(req,res)=>{		//autobill api to retrieve autobill information for a user
 	let {email, name} = req.body;
+	
 	
 	const holdArray = []		//holds autobill rows
 
