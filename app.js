@@ -521,7 +521,7 @@ app.post('/api/autobill',(req,res)=>{		//autobill api to retrieve autobill infor
 app.post('/api/storeautobill',(req,res)=>{		//autobill api to retrieve autobill information for a user
 	let {email, amount, name, date} = req.body;
 	
-	pool.query('INSERT INTO auto_bill (email, amount, bill_name, bill_date) VALUES ($1, $2, $3, $4)', [email, amount, name, date], (error, results) => {
+	pool.query('INSERT INTO auto_bill (email, amount, bill_name, bill_date) VALUES ($1, $2, $3, $4)', [email, amount, name.toLowerCase(), date], (error, results) => {
 	    if (error) {
 	      res.send("Error");
 	      throw error
