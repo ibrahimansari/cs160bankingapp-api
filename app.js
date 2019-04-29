@@ -532,6 +532,13 @@ app.post('/api/storeautobill',(req,res)=>{		//autobill api to retrieve autobill 
 app.post('/api/removeautobill',(req,res)=>{		//autobill api to retrieve autobill information for a user
 	let {email, name} = req.body;
 	
+	let today = new Date(); // Or Date.today()
+	let tomorrow = today.add(1).day();
+	console.log("today: );
+	console.log(today);
+	console.log("tomrrow ");
+	console.log(tomorrow);
+	
 	pool.query('delete from auto_bill where email=$1 AND bill_name = $2', [email, name], (error, results) => {
 	    if (error) {
 	      throw error
