@@ -195,6 +195,57 @@ app.post('/api/registerUser', (req, res) => {				//api for user registration
 });
 
 
+app.post('/api/depositSavings', (req, res) => {	//api for deposit into checking
+	
+	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+	
+	const {first_name, last_name, email, amount, balance} = req.body
+	let total = balance + amount;	//add amount to users checking
+	console.log('depositing');	
+
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount, total, first_name, last_name], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})
+
+	//update balance of checking
+	pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='savings'", [total, email], (error, results) => {	
+	    if (error) {
+	      throw error
+	    }
+	})	
+	
+	res.send("Ok");
+
+});
+
+app.post('/api/withdrawSavings', (req, res) => {	//api for withdrawing from checking
+	console.log('withdrawing');
+	
+	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+	const {first_name, last_name, email, amount, balance} = req.body
+	let total = balance - amount;	//add amount to users checking
+	
+
+	pool.query('INSERT INTO transactions (transaction_id, email, date_stamp, amount, balance, first_name, last_name) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6)', [email, date, amount*-1, total, first_name, last_name], (error, results) => {
+	    if (error) {
+	      throw error
+	    }
+	})
+
+	//update balance of checking
+	pool.query("UPDATE bank_accounts SET balance=$1 where email=$2 AND type='savings'", [total, email], (error, results) => {	
+	    if (error) {
+	      throw error
+	    }
+	})	
+	
+	res.send("Ok");
+
+});
+
+
 app.post('/api/depositChecking', (req, res) => {	//api for deposit into checking
 	
 	let date =  new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
